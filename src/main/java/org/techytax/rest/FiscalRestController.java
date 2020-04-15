@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
 import org.techytax.domain.BookValue;
 import org.techytax.domain.Cost;
@@ -18,6 +19,7 @@ import org.techytax.domain.VatType;
 import org.techytax.domain.fiscal.FiscalOverview;
 import org.techytax.domain.fiscal.VatReport;
 import org.techytax.helper.FiscalOverviewHelper;
+import org.techytax.repository.ActivumRepository;
 import org.techytax.repository.BookRepository;
 import org.techytax.repository.CostRepository;
 import org.techytax.saas.domain.Registration;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static java.math.BigDecimal.ZERO;
 import static org.techytax.helper.AmountHelper.roundDownToInteger;
@@ -43,13 +46,10 @@ public class FiscalRestController {
     private final JwtTokenUtil jwtTokenUtil;
 
     private FiscalOverviewHelper fiscalOverviewHelper;
-
     private CostRepository costRepository;
-
+    private ActivumRepository activumRepository;
     private BookRepository bookRepository;
-
     private RegistrationRepository registrationRepository;
-
     private RestTemplate restTemplate;
 
     @Autowired
@@ -57,6 +57,7 @@ public class FiscalRestController {
       JwtTokenUtil jwtTokenUtil,
       FiscalOverviewHelper fiscalOverviewHelper,
       CostRepository costRepository,
+      ActivumRepository activumRepository,
       BookRepository bookRepository,
       RegistrationRepository registrationRepository,
       RestTemplate restTemplate
@@ -64,6 +65,7 @@ public class FiscalRestController {
         this.jwtTokenUtil = jwtTokenUtil;
         this.fiscalOverviewHelper = fiscalOverviewHelper;
         this.costRepository = costRepository;
+        this.activumRepository = activumRepository;
         this.bookRepository = bookRepository;
         this.registrationRepository = registrationRepository;
         this.restTemplate = restTemplate;
@@ -78,11 +80,21 @@ public class FiscalRestController {
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.POST)
     public void sendFiscalData(HttpServletRequest request, @RequestBody VatReport vatReport) throws Exception {
         String username = getUser(request);
+        if (vatReport.getInvestments() != null && vatReport.getInvestments().size() > 0) {
+            saveActiva(vatReport.getInvestments(), username);
+        }
         saveCosts(vatReport, username);
         addBookValues(vatReport, username);
         VatDeclarationData vatDeclarationData = createVatDeclarationData(username, vatReport);
         String url = "http://localhost:8081/digipoort/vat";
         restTemplate.postForEntity(url, vatDeclarationData, VatDeclarationData.class);
+    }
+
+    private void saveActiva(ArrayList<Activum> activa, String username) {
+        for (Activum activum : activa) {
+            activum.setUser(username);
+            activumRepository.save(activum);
+        }
     }
 
     private void saveCosts(@RequestBody VatReport vatReport, String username) {
