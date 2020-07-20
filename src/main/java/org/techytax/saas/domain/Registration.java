@@ -61,6 +61,7 @@ public class Registration {
     String city;
     String accountNumber;
     Long chamberOfCommerceNumber;
+    String bigNumber; // BIG Beroepen Individuele Gezondheidszorg
 
     public String getFullAddress() {
       StringBuilder sb = new StringBuilder();
