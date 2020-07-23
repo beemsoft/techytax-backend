@@ -2,7 +2,6 @@ package org.techytax.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +51,7 @@ public class ProjectRestController {
     }
 
     @RequestMapping(value = "auth/project/{id}", method = RequestMethod.DELETE)
-    public void deleteCustomer(HttpServletRequest request, @PathVariable Long id) {
+    public void deleteProject(HttpServletRequest request, @PathVariable Long id) {
         projectRepository.deleteById(id);
     }
 

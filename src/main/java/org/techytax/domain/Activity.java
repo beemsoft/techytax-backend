@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,10 +16,10 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-public class Project {
+public class Activity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected Long id = 0L;
 
 	@NotNull
@@ -29,33 +27,21 @@ public class Project {
 
 	@NotNull
 	@ManyToOne
-	private Customer customer;
+	private Project project;
 
-	@NotNull
-	private String code;
-
-	private String projectDescription;
+	@Column(precision=2, scale=2)
+	private BigDecimal hours;
 
 	private String activityDescription;
 
-	private Date startDate;
-
-	private Date endDate;
-
-	@Column(precision=50, scale=2)
-	private BigDecimal rate;
-
-	private int paymentTermDays;
-
-	@Enumerated(EnumType.ORDINAL)
-	private VatType vatType = VatType.HIGH;
+	private Date activityDate;
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Project)) {
+		if (!(obj instanceof Activity)) {
 			return false;
 		}
-		Project other = (Project)obj;
+		Activity other = (Activity)obj;
 		return this.id.equals(other.id);
 	}
 }
