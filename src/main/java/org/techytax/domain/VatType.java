@@ -1,7 +1,7 @@
 package org.techytax.domain;
 
 public enum VatType {
-	NONE("vat.none", 0), LOW("vat.low", 0.06d), HIGH("vat.high", 0.21d);
+	NONE("vat.none", 0), LOW("vat.low", 0.09d), HIGH("vat.high", 0.21d);
 
 	private String key;
 	private double value;
@@ -14,15 +14,15 @@ public enum VatType {
 	public String getKey() {
 		return key;
 	}
-	
+
 	public double getValue() throws Exception {
 		return value;
 	}
-	
+
 	public int getValueAsInteger() throws Exception {
 		return (int) (100 * getValue());
 	}
-	
+
 	public static VatType getInstance(String type) {
 		VatType balanceType;
 		switch (Integer.parseInt(type)) {
@@ -41,7 +41,7 @@ public enum VatType {
 		}
 		return balanceType;
 	}
-	
+
 	@Override
 	public String toString() {
 		return name();
