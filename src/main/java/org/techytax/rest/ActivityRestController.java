@@ -12,6 +12,7 @@ import org.techytax.repository.ActivityRepository;
 import org.techytax.security.JwtTokenUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.Collection;
 
 @RestController
@@ -33,8 +34,14 @@ public class ActivityRestController {
     }
 
     @RequestMapping(value = "auth/activity/{id}", method = RequestMethod.GET)
-    public Activity getProject(HttpServletRequest request, @PathVariable Long id) {
+    public Activity getActivity(HttpServletRequest request, @PathVariable Long id) {
         return activityRepository.findById(id).get();
+    }
+
+    @RequestMapping(value = "auth/activity/project/{id}", method = RequestMethod.GET)
+    public Collection<Activity> getActivitiesForProject(HttpServletRequest request, @PathVariable Long id) {
+        String username = getUser(request);
+        return activityRepository.getActivitiesForProject(username, id, LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
     }
 
     @RequestMapping(value = "auth/activity", method = { RequestMethod.PUT, RequestMethod.POST })

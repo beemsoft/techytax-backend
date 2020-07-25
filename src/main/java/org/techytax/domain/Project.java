@@ -45,6 +45,9 @@ public class Project {
 	@Column(precision=50, scale=2)
 	private BigDecimal rate;
 
+	@Column(precision=3, scale=2)
+	private BigDecimal revenuePerc;
+
 	private int paymentTermDays;
 
 	@Enumerated(EnumType.ORDINAL)

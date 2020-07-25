@@ -1,5 +1,6 @@
 package org.techytax.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -34,7 +35,8 @@ public class Activity {
 
 	private String activityDescription;
 
-	private Date activityDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate activityDate;
 
 	@Override
 	public boolean equals(Object obj) {

@@ -1,7 +1,6 @@
 package org.techytax.saas.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.techytax.domain.VatPeriodType;
 
 import javax.persistence.CascadeType;
@@ -14,14 +13,18 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Registration {
 
+  public Registration() {
+      this.companyData = new CompanyData();
+      this.personalData = new PersonalData();
+      this.fiscalData = new FiscalData();
+  }
+
   @Entity
-  @Getter
-  @Setter
-  public static class PersonalData {
+  @Data
+  public class PersonalData {
     @Id
     @GeneratedValue
     Long id = 0L;
@@ -49,9 +52,8 @@ public class Registration {
   }
 
   @Entity
-  @Getter
-  @Setter
-  public static class CompanyData {
+  @Data
+  public class CompanyData {
     @Id
     @GeneratedValue
     Long id = 0L;
@@ -77,9 +79,8 @@ public class Registration {
   }
 
   @Entity
-  @Getter
-  @Setter
-  public static class FiscalData {
+  @Data
+  public class FiscalData {
     @Id
     @GeneratedValue
     Long id = 0L;
