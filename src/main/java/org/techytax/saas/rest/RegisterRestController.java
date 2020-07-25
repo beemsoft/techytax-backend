@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.techytax.domain.RegisterUser;
 import org.techytax.model.security.Authority;
 import org.techytax.model.security.AuthorityName;
 import org.techytax.model.security.User;
@@ -26,8 +27,8 @@ import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 
 @Slf4j
 @RestController
@@ -71,23 +72,21 @@ public class RegisterRestController {
 
   @RequestMapping(value = "register", method = RequestMethod.POST)
   @Transactional
-  public void addRegistration(HttpServletRequest request, @RequestBody Registration registration) {
-    if (!registrationRepository.findByUser(registration.getUser()).isEmpty()) {
+  public void addRegistration(HttpServletRequest request, @RequestBody RegisterUser registerUser) {
+    if (!registrationRepository.findByUser(registerUser.getUsername()).isEmpty()) {
       throw new RuntimeException("Gebruiker bestaat al");
     }
     User user = new User();
-    String password = new BCryptPasswordEncoder().encode(registration.getPassword());
+    String password = new BCryptPasswordEncoder().encode(registerUser.getPassword());
     user.setPassword(password);
-    user.setUsername(registration.getUser());
-    user.setEmail(registration.getPersonalData().getEmail());
+    user.setUsername(registerUser.getUsername());
     Authority authority = authorityRepository.findByName(AuthorityName.ROLE_USER);
     user.setAuthorities(Arrays.asList(authority));
     user.setEnabled(Boolean.TRUE);
-    user.setFirstname(registration.getPersonalData().getInitials());
-    user.setLastname(registration.getPersonalData().getSurname());
-    user.setLastPasswordResetDate(new Date());
+    user.setFirstname(registerUser.getFirstName());
+    user.setLastname(registerUser.getLastName());
+    user.setLastPasswordResetDate(LocalDate.now());
     userRepository.save(user);
-    registrationRepository.save(registration);
     log.info("addRegistration called by user: {}", getUser(request));
   }
 
@@ -101,7 +100,13 @@ public class RegisterRestController {
   @RequestMapping(value = "auth/register", method = RequestMethod.GET)
   public Registration getRegistration(HttpServletRequest request) {
     String username = getUser(request);
-    return registrationRepository.findByUser(username).stream().findFirst().get();
+    Registration registration;
+    try {
+      registration = registrationRepository.findByUser(username).stream().findFirst().get();
+    } catch (Exception e) {
+      throw new RuntimeException("Vul eerst je gegevens in");
+    }
+    return registration;
   }
 
   @Transactional

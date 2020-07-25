@@ -24,7 +24,7 @@ public class Registration {
 
   @Entity
   @Data
-  public class PersonalData {
+  public static class PersonalData {
     @Id
     @GeneratedValue
     Long id = 0L;
@@ -53,7 +53,7 @@ public class Registration {
 
   @Entity
   @Data
-  public class CompanyData {
+  public static class CompanyData {
     @Id
     @GeneratedValue
     Long id = 0L;
@@ -80,7 +80,7 @@ public class Registration {
 
   @Entity
   @Data
-  public class FiscalData {
+  public static class FiscalData {
     @Id
     @GeneratedValue
     Long id = 0L;

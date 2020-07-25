@@ -1,12 +1,11 @@
 package org.techytax.security;
 
-import java.util.Collection;
-import java.util.Date;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
+import java.util.Collection;
 
 /**
  * Created by stephan on 20.03.16.
@@ -21,7 +20,7 @@ public class JwtUser implements UserDetails {
     private final String email;
     private final Collection<? extends GrantedAuthority> authorities;
     private final boolean enabled;
-    private final Date lastPasswordResetDate;
+    private final LocalDate lastPasswordResetDate;
 
     public JwtUser(
           Long id,
@@ -31,7 +30,7 @@ public class JwtUser implements UserDetails {
           String email,
           String password, Collection<? extends GrantedAuthority> authorities,
           boolean enabled,
-          Date lastPasswordResetDate
+          LocalDate lastPasswordResetDate
     ) {
         this.id = id;
         this.username = username;
@@ -101,7 +100,7 @@ public class JwtUser implements UserDetails {
     }
 
     @JsonIgnore
-    public Date getLastPasswordResetDate() {
+    public LocalDate getLastPasswordResetDate() {
         return lastPasswordResetDate;
     }
 }

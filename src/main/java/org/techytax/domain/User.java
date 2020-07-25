@@ -8,10 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @MappedSuperclass
 @Data
@@ -24,39 +22,38 @@ public class User implements Serializable {
 	protected Long id;
 
 	private String role;
-	
+
 	private boolean blocked;
-	
+
 	@Column(name = "company_address")
 	private String companyAddress;
-	
+
 	@Column(name = "company_zipcode")
 	private String companyZipCode;
-	
+
 	@Column(name = "company_city")
 	private String companyCity;
-	
+
 	private String companyName;
 	private String email;
-	
+
 	private String initials;
 	private String prefix;
 	private String surname;
-	
-    @Temporal(TemporalType.TIMESTAMP)
-	private Date latestOnlineTime;
-    
+
+	private LocalDate latestOnlineTime;
+
 	private String password;
 	private String username;
 	private String phoneNumber;
 	private String fiscalNumber;
-	
+
 	@Column(name = "kvk_nummer")
 	private Long chamberOfCommerceNumber;
-	
+
 	@Enumerated(EnumType.ORDINAL)
 	private VatPeriodType vatPeriodType = VatPeriodType.PER_QUARTER;
-	
+
 	private String accountNumber;
 
 	public boolean isBusinessAccount() {
@@ -76,10 +73,10 @@ public class User implements Serializable {
 		if (surname != null) {
 			sb.append(initials);
 			if (prefix != null) {
-				sb.append(" ");			
+				sb.append(" ");
 				sb.append(prefix);
 			}
-			sb.append(" ");		
+			sb.append(" ");
 			sb.append(surname);
 			return sb.toString();
 		} else {

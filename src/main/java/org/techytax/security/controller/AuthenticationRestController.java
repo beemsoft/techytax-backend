@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.LoggedOnUser;
-import org.techytax.saas.domain.Registration;
-import org.techytax.saas.repository.RegistrationRepository;
 import org.techytax.security.JwtAuthenticationRequest;
 import org.techytax.security.JwtTokenUtil;
 
@@ -35,9 +33,6 @@ public class AuthenticationRestController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private RegistrationRepository registrationRepository;
-
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/users/authenticate")
     public ResponseEntity<LoggedOnUser> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
@@ -54,12 +49,10 @@ public class AuthenticationRestController {
         // Reload password post-security so we can generate token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        Registration registration = registrationRepository.findByUser(authenticationRequest.getUsername()).iterator().next();
 
         LoggedOnUser user = new LoggedOnUser();
         user.setToken(token);
         user.setUsername(userDetails.getUsername());
-        user.setFirstName(registration.getPersonalData().getFullName());
         return ResponseEntity.ok(user);
     }
 }
