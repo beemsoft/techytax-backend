@@ -16,6 +16,7 @@ import org.techytax.saas.domain.Registration;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -378,7 +379,7 @@ public class InvoiceCreator {
       PdfPTable table = new PdfPTable(1);
       table.setWidthPercentage(80);
 
-      Paragraph title = new Paragraph(registration.getCompanyData().getCompanyName(), titleFont);
+      Paragraph title = new Paragraph(invoice.getProject().getCustomer().getName(), titleFont);
       cell = new PdfPCell(title);
       cell.setBorder(PdfPCell.NO_BORDER);
       table.addCell(cell);
@@ -487,12 +488,15 @@ public class InvoiceCreator {
       cell.setBackgroundColor(color);
       subTable.addCell(cell);
 
+      BigDecimal subTotalRevenue = BigDecimal.ZERO;
       for (Activity activity: activities) {
         cell = new PdfPCell(new Paragraph(activity.getActivityDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
         subTable.addCell(cell);
         cell = new PdfPCell(new Paragraph(activity.getActivityDescription()));
         subTable.addCell(cell);
-        cell = new PdfPCell(new Paragraph(invoice.getProject().getRate().multiply(activity.getHours()).toString()));
+        BigDecimal revenue = invoice.getProject().getRate().multiply(activity.getHours());
+        subTotalRevenue = subTotalRevenue.add(revenue);
+        cell = new PdfPCell(new Paragraph(revenue.toString()));
         cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
         subTable.addCell(cell);
       }
@@ -513,8 +517,7 @@ public class InvoiceCreator {
       cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
       cell.setGrayFill(0.9f);
       subTable.addCell(cell);
-      BigDecimal subTotal = BigDecimal.valueOf(10);
-      Paragraph chunkMoney1 = new Paragraph(formatDecimal(subTotal), subTotalAmountFont);
+      Paragraph chunkMoney1 = new Paragraph(formatDecimal(subTotalRevenue), subTotalAmountFont);
       cell = new PdfPCell(chunkMoney1);
       cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
       subTable.addCell(cell);
@@ -547,8 +550,7 @@ public class InvoiceCreator {
       cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
       cell.setGrayFill(0.9f);
       subTable.addCell(cell);
-      BigDecimal revenue = BigDecimal.valueOf(10);
-      Paragraph chunkMoney = new Paragraph(formatDecimal(revenue), totalAmountFont);
+      Paragraph chunkMoney = new Paragraph(formatDecimal(subTotalRevenue.multiply(invoice.getProject().getRevenuePerc().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))), totalAmountFont);
       cell = new PdfPCell(chunkMoney);
       cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
       subTable.addCell(cell);
