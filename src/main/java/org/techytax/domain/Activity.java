@@ -33,6 +33,9 @@ public class Activity {
 	@Column(precision=2, scale=2)
 	private BigDecimal hours;
 
+	@Column(precision = 10, scale = 2)
+	private BigDecimal revenue;
+
 	private String activityDescription;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

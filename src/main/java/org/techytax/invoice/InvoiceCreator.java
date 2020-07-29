@@ -494,7 +494,7 @@ public class InvoiceCreator {
         subTable.addCell(cell);
         cell = new PdfPCell(new Paragraph(activity.getActivityDescription()));
         subTable.addCell(cell);
-        BigDecimal revenue = invoice.getProject().getRate().multiply(activity.getHours());
+        BigDecimal revenue = activity.getRevenue();
         subTotalRevenue = subTotalRevenue.add(revenue);
         cell = new PdfPCell(new Paragraph(revenue.toString()));
         cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
