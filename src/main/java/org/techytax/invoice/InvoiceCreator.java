@@ -409,7 +409,7 @@ public class InvoiceCreator {
       cell = new PdfPCell(new Paragraph("BIG"));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
-      cell = new PdfPCell(new Paragraph(registration.getCompanyData().getBigNumber()));
+      cell = new PdfPCell(new Paragraph(registration.getCompanyData().getJobsInIndividualHealthcareNumber()));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
       cell = new PdfPCell(new Paragraph("KvK nr"));

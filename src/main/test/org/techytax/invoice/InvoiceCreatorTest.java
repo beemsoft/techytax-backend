@@ -22,7 +22,7 @@ public class InvoiceCreatorTest {
         Registration registration = new Registration();
         registration.getCompanyData().setCompanyName("Mijn bedrijf");
         registration.getCompanyData().setChamberOfCommerceNumber(123L);
-        registration.getCompanyData().setBigNumber("321");
+        registration.getCompanyData().setJobsInIndividualHealthcareNumber("321");
 
         Invoice invoice = new Invoice();
         invoice.setSent(LocalDate.now());

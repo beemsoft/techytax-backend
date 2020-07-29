@@ -97,7 +97,7 @@ public class InvoiceRestController {
         invoice.setUser(username);
         invoice.setSent(LocalDate.now());
         byte[] contents;
-        if (registration.getCompanyData().getBigNumber() == null) {
+        if (registration.getCompanyData().getJobsInIndividualHealthcareNumber() == null) {
             contents = invoiceCreator.createPdfInvoice(invoice, registration);
         } else {
             Collection<Activity> activities = activityRepository.getActivitiesForProject(username, invoice.getProject().getId(), LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
