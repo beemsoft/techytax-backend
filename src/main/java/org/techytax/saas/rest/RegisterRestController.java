@@ -93,6 +93,8 @@ public class RegisterRestController {
   @RequestMapping(value = "auth/register", method = RequestMethod.PUT)
   @Transactional
   public void updateRegistration(HttpServletRequest request, @RequestBody Registration registration) {
+    String username = getUser(request);
+    registration.setUser(username);
     registrationRepository.save(registration);
     log.info("updateRegistration called by user: {}", getUser(request));
   }
