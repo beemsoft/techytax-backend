@@ -2,7 +2,11 @@ package org.techytax.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.CostMatch;
 import org.techytax.repository.CostMatchRepository;
 import org.techytax.security.JwtTokenUtil;
@@ -26,6 +30,11 @@ public class CostMatchRestController {
     public Collection<CostMatch> getCostMatches(HttpServletRequest request) {
         String username = getUser(request);
         return costMatchRepository.findByUser(username);
+    }
+
+    @RequestMapping(value = "auth/match/{id}", method = RequestMethod.GET)
+    public CostMatch getCostMatch(HttpServletRequest request, @PathVariable Long id) {
+        return costMatchRepository.findById(id).get();
     }
 
     @RequestMapping(value = "auth/match", method = { RequestMethod.PUT, RequestMethod.POST })
