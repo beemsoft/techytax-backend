@@ -85,9 +85,6 @@ public class FiscalRestController {
         }
         saveCosts(vatReport, username);
         addBookValues(vatReport, username);
-        VatDeclarationData vatDeclarationData = createVatDeclarationData(username, vatReport);
-        String url = "http://localhost:8081/digipoort/vat";
-        restTemplate.postForEntity(url, vatDeclarationData, VatDeclarationData.class);
     }
 
     private void saveActiva(ArrayList<Activum> activa, String username) {
@@ -190,15 +187,15 @@ public class FiscalRestController {
             BigInteger owedToBePaidBack = owed.subtract(data.getValueAddedTaxOnInput());
             data.setValueAddedTaxOwedToBePaidBack(owedToBePaidBack);
         } else {
-            data.setValueAddedTaxOnInput(tax);
+            data.setValueAddedTaxOnInput(BigInteger.ZERO);
             data.setValueAddedTaxPrivateUse(BigInteger.ZERO);
-            data.setValueAddedTaxSuppliesServicesGeneralTariff(tax);
+            data.setValueAddedTaxSuppliesServicesGeneralTariff(BigInteger.ZERO);
             data.setValueAddedTaxOwedToBePaidBack(BigInteger.ZERO);
         }
         return data;
     }
 
-    private void addBookValues(VatReport vatReport, String username) {
+    private void                                                                                                                                                                                addBookValues(VatReport vatReport, String username) {
         if (vatReport.getLatestTransactionDate().getYear() < LocalDate.now().getYear()) {
             // TODO: fix NPE vat saldo null for KOR
             if (vatReport.getVatSaldo().compareTo(ZERO) > 0) {
