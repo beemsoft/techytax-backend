@@ -52,14 +52,18 @@ public class Activum {
     private int nofYearsForDepreciation;
 
     public String getOmschrijving() {
-        return balanceType.getKey();
+        if (balanceType != null)
+            return balanceType.getKey();
+        else return "Undefined type";
     }
 
     public BigInteger getDepreciation() {
+        if (remainingValue == null) return BigInteger.ZERO;
         return DepreciationHelper.getDepreciation(this);
     }
 
     public BigInteger getValueAtEndOfFiscalYear() {
+        if (remainingValue == null) return BigInteger.ZERO;
         return DepreciationHelper.getValueAtEndOfFiscalYear(this);
     }
 

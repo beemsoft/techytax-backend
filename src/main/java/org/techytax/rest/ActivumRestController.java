@@ -36,7 +36,7 @@ public class ActivumRestController {
     }
 
     @RequestMapping(value = "auth/activum/machine", method = { RequestMethod.PUT, RequestMethod.POST })
-    public void saveActivum(HttpServletRequest request, @RequestBody Activum activum) {
+    public void saveActivumMachine(HttpServletRequest request, @RequestBody Activum activum) {
         String username = getUser(request);
         activum.setUser(username);
         activumRepository.save(activum);
@@ -49,10 +49,23 @@ public class ActivumRestController {
         activumRepository.save(activum);
     }
 
+    @RequestMapping(value = "auth/activum", method = { RequestMethod.PUT, RequestMethod.POST })
+    public void saveActivum(HttpServletRequest request, @RequestBody Activum activum) {
+        String username = getUser(request);
+        activum.setUser(username);
+        activumRepository.save(activum);
+    }
+
     @RequestMapping(value = "auth/activum/car", method = { RequestMethod.GET })
     public BusinessCar getActivumCar(HttpServletRequest request) {
         String username = getUser(request);
         return activumRepository.findBusinessCar(username, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+    }
+
+    @RequestMapping(value = "auth/activum/{id}", method = { RequestMethod.GET })
+    public Activum getActivum(HttpServletRequest request, @PathVariable Long id) {
+        String username = getUser(request);
+        return activumRepository.findById(id).get();
     }
 
     @RequestMapping(value = "auth/activum/office", method = { RequestMethod.PUT, RequestMethod.POST })

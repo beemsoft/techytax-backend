@@ -25,7 +25,7 @@ class ActivaHelper {
 
 	@Autowired
 	private BookRepository bookRepository;
-	
+
 	@Autowired
 	private ActivumRepository activumRepository;
 
@@ -43,12 +43,15 @@ class ActivaHelper {
 		return activaMap;
 	}
 
-	private void handleActivum(String username, BalanceType balanceType) throws Exception {
+	private void handleActivum(String username, BalanceType balanceType) {
 		Collection<Activum> newActiva = activumRepository.findActivums(username, balanceType, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
 		BigDecimal totalCost = BigDecimal.ZERO;
 		BigInteger totalValue = BigInteger.ZERO;
 		BigInteger totalRemainingValue = ZERO;
 		for (Activum activum : newActiva) {
+			if (activum.getPurchasePrice() == null) {
+				throw new RuntimeException("No purchase price for: " + activum.getDescription());
+			}
 			totalCost = totalCost.add(activum.getPurchasePrice());
 			totalValue = totalValue.add(DepreciationHelper.getValueAtEndOfFiscalYear(activum));
 			totalRemainingValue = totalRemainingValue.add(activum.getRemainingValue());
