@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
 import org.techytax.domain.BusinessCar;
+import org.techytax.domain.Office;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,6 +22,9 @@ public interface ActivumRepository extends CrudRepository<Activum, Long> {
     @Query("select a from Activum a " +
       "where a.user = ?1 and a.balanceType = org.techytax.domain.BalanceType.CAR and (a.endDate is null or a.endDate between ?2 and ?3)")
     BusinessCar findBusinessCar(String username, LocalDate startDate, LocalDate endDate);
+
+    @Query("select a from Activum a where a.user = ?1 and a.balanceType = org.techytax.domain.BalanceType.OFFICE")
+    Office findOffice(String username);
 
     @Modifying
     @Query("delete from Activum a where a.user = ?1")

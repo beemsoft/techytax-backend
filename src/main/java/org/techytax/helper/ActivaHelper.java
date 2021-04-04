@@ -6,6 +6,7 @@ import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
 import org.techytax.domain.BookValue;
 import org.techytax.domain.FiscalBalance;
+import org.techytax.domain.Office;
 import org.techytax.repository.ActivumRepository;
 import org.techytax.repository.BookRepository;
 import org.techytax.util.DateHelper;
@@ -32,7 +33,7 @@ class ActivaHelper {
 	private int bookYear;
 	private Map<BalanceType, FiscalBalance> activaMap;
 
-	Map<BalanceType, FiscalBalance> handleActiva(String username) throws Exception {
+	Map<BalanceType, FiscalBalance> handleActiva(String username) {
 		bookYear = DateHelper.getYear(new Date()) - 1;
 		activaMap = new HashMap<>();
 
@@ -68,5 +69,10 @@ class ActivaHelper {
 		fiscalBalance.setTotalPurchaseCost(totalCost);
 		fiscalBalance.setTotalRemainingValue(totalRemainingValue);
 		activaMap.put(balanceType, fiscalBalance);
+	}
+
+	BigInteger getOfficeBottomValue(String username) {
+		Office office = activumRepository.findOffice(username);
+		return office.getTerrainValue();
 	}
 }

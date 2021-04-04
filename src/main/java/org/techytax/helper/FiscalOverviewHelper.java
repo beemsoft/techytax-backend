@@ -18,7 +18,7 @@ public class FiscalOverviewHelper {
 
 	@Autowired
 	private ActivaHelper activaHelper;
-	
+
 	private FiscalOverview overview;
 
 	@Autowired
@@ -26,7 +26,7 @@ public class FiscalOverviewHelper {
 
 	private int bookYear;
 	private Map<BalanceType, FiscalBalance> passivaMap;
-	
+
 	public FiscalOverview createFiscalOverview(Date beginDatum, Date eindDatum, String username) throws Exception {
 		bookYear = DateHelper.getFiscalYear();
 		overview = new FiscalOverview();
@@ -37,9 +37,10 @@ public class FiscalOverviewHelper {
 
 		Map<BalanceType, FiscalBalance> activaMap = activaHelper.handleActiva(username);
 		overview.setActivaMap(activaMap);
+		overview.setOfficeBottomValue(activaHelper.getOfficeBottomValue(username));
 
-    profitAndLoss.handleProfitAndLoss(privatWithdrawal, username);
-    overview.setProfitAndLoss(profitAndLoss);
+		profitAndLoss.handleProfitAndLoss(privatWithdrawal, username);
+		overview.setProfitAndLoss(profitAndLoss);
 
 		overview.setPassivaMap(passivaMap);
 

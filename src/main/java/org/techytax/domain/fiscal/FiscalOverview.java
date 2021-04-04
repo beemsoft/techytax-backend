@@ -5,8 +5,6 @@ import org.techytax.domain.BalanceType;
 import org.techytax.domain.FiscalBalance;
 import org.techytax.domain.PrepaidTax;
 import org.techytax.domain.PrivateWithdrawal;
-import org.techytax.report.domain.BalanceReport;
-import org.techytax.report.helper.FiscalReportHelper;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -21,6 +19,7 @@ public class FiscalOverview {
 
 	private ProfitAndLoss profitAndLoss;
 	private Map<BalanceType,FiscalBalance> activaMap;
+	private BigInteger officeBottomValue;
 
 	private Map<BalanceType,FiscalBalance> passivaMap;
 
@@ -41,13 +40,4 @@ public class FiscalOverview {
 
 
 	private BigDecimal turnOverUnpaid = BigDecimal.ZERO;
-
-//	public BalanceReport getActivaReport() {
-//		return FiscalReportHelper.getActivaReport(activaMap);
-//	}
-//
-//	public BalanceReport getPassivaReport() {
-//		return FiscalReportHelper.getPassivaReport(passivaMap);
-//	}
-
 }
