@@ -1,6 +1,5 @@
 package org.techytax.helper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
@@ -24,27 +23,38 @@ import static java.math.BigInteger.ZERO;
 @Component
 class ActivaHelper {
 
-	@Autowired
-	private BookRepository bookRepository;
+	private final BookRepository bookRepository;
 
-	@Autowired
-	private ActivumRepository activumRepository;
+	private final ActivumRepository activumRepository;
 
 	private int bookYear;
-	private Map<BalanceType, FiscalBalance> activaMap;
+	private final Map<BalanceType, FiscalBalance> balanceMap = new HashMap<>();
+
+	ActivaHelper(BookRepository bookRepository, ActivumRepository activumRepository) {
+		this.bookRepository = bookRepository;
+		this.activumRepository = activumRepository;
+	}
 
 	Map<BalanceType, FiscalBalance> handleActiva(String username) {
 		bookYear = DateHelper.getYear(new Date()) - 1;
-		activaMap = new HashMap<>();
+		BigInteger totalActiva = ZERO;
+		BigInteger newValue = handleActivumWithDepreciation(username, BalanceType.MACHINERY);
+		totalActiva = totalActiva.add(newValue);
+		newValue = handleActivumWithDepreciation(username, BalanceType.OFFICE);
+		totalActiva = totalActiva.add(newValue);
+		newValue = handleActivumWithDepreciation(username, BalanceType.CAR);
+		totalActiva = totalActiva.add(newValue);
+		newValue = handleBalanceType(username, BalanceType.CURRENT_ASSETS);
+		totalActiva = totalActiva.add(newValue);
+		BigInteger pensionValue = handleBalanceType(username, BalanceType.PENSION);
+        BigInteger nonCurrentAssetsValue = totalActiva.subtract(pensionValue);
+		handleBalanceTypeWithEndValue(username, nonCurrentAssetsValue);
+		handleBalanceType(username, BalanceType.VAT_TO_BE_PAID);
 
-		handleActivum(username, BalanceType.MACHINERY);
-		handleActivum(username, BalanceType.OFFICE);
-		handleActivum(username, BalanceType.CAR);
-
-		return activaMap;
+		return balanceMap;
 	}
 
-	private void handleActivum(String username, BalanceType balanceType) {
+	private BigInteger handleActivumWithDepreciation(String username, BalanceType balanceType) {
 		Collection<Activum> newActiva = activumRepository.findActivums(username, balanceType, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
 		BigDecimal totalCost = BigDecimal.ZERO;
 		BigInteger totalValue = BigInteger.ZERO;
@@ -61,14 +71,46 @@ class ActivaHelper {
 		FiscalBalance fiscalBalance = new FiscalBalance();
 		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear - 1);
 		if (previousBookValue == null) {
-				fiscalBalance.setBeginSaldo(ZERO);
+			fiscalBalance.setBeginSaldo(ZERO);
 		} else {
-				fiscalBalance.setBeginSaldo(previousBookValue.getSaldo());
+			fiscalBalance.setBeginSaldo(previousBookValue.getSaldo());
 		}
 		fiscalBalance.setEndSaldo(totalValue);
 		fiscalBalance.setTotalPurchaseCost(totalCost);
 		fiscalBalance.setTotalRemainingValue(totalRemainingValue);
-		activaMap.put(balanceType, fiscalBalance);
+		balanceMap.put(balanceType, fiscalBalance);
+		return totalValue;
+	}
+
+	private BigInteger handleBalanceType(String username, BalanceType balanceType) {
+		FiscalBalance fiscalBalance = new FiscalBalance();
+		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear - 1);
+		if (previousBookValue == null) {
+			fiscalBalance.setBeginSaldo(ZERO);
+		} else {
+			fiscalBalance.setBeginSaldo(previousBookValue.getSaldo());
+		}
+		BookValue newBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear);
+		if (newBookValue == null) {
+			fiscalBalance.setEndSaldo(ZERO);
+		} else {
+			fiscalBalance.setEndSaldo(newBookValue.getSaldo());
+		}
+		balanceMap.put(balanceType, fiscalBalance);
+		return newBookValue.getSaldo();
+	}
+
+	private BigInteger handleBalanceTypeWithEndValue(String username, BigInteger endValue) {
+		FiscalBalance fiscalBalance = new FiscalBalance();
+		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, BalanceType.NON_CURRENT_ASSETS, bookYear - 1);
+		if (previousBookValue == null) {
+			fiscalBalance.setBeginSaldo(ZERO);
+		} else {
+			fiscalBalance.setBeginSaldo(previousBookValue.getSaldo());
+		}
+		fiscalBalance.setEndSaldo(endValue);
+		balanceMap.put(BalanceType.NON_CURRENT_ASSETS, fiscalBalance);
+		return endValue;
 	}
 
 	BigInteger getOfficeBottomValue(String username) {

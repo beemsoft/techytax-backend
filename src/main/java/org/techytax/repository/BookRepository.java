@@ -10,6 +10,7 @@ import java.util.Collection;
 
 public interface BookRepository extends CrudRepository<BookValue, Long> {
 
+    @Query("select b from BookValue as b where b.user = ?1 order by b.bookYear desc")
     Collection<BookValue> findByUser(String username);
 
     BookValue findBookValueByUserAndBalanceTypeAndBookYear(String username, BalanceType balanceType, int year);

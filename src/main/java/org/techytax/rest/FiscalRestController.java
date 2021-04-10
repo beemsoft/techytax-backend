@@ -74,7 +74,7 @@ public class FiscalRestController {
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.GET)
     public FiscalOverview getFiscalOverview(HttpServletRequest request) throws Exception {
         String username = getUser(request);
-        return fiscalOverviewHelper.createFiscalOverview(null, null, username);
+        return fiscalOverviewHelper.createFiscalOverview(username);
     }
 
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.POST)

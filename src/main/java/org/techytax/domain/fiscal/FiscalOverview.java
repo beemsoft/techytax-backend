@@ -18,10 +18,9 @@ public class FiscalOverview {
 	private int jaar;
 
 	private ProfitAndLoss profitAndLoss;
-	private Map<BalanceType,FiscalBalance> activaMap;
 	private BigInteger officeBottomValue;
 
-	private Map<BalanceType,FiscalBalance> passivaMap;
+	private Map<BalanceType,FiscalBalance> balanceMap;
 
 	private FiscalPension fiscalPension;
 
