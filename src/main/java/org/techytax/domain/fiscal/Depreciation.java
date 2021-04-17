@@ -22,6 +22,7 @@ public class Depreciation {
   private BigInteger afschrijvingAuto;
   private BigInteger machineryDepreciation;
   private BigInteger settlementDepreciation;
+  private BigInteger totalDepreciation;
 
   @Autowired
   @JsonIgnore
@@ -32,7 +33,7 @@ public class Depreciation {
   private Collection<Activum> officeList;
 
 
-  void handleDepreciations(String username) throws Exception {
+  void handleDepreciations(String username) {
     afschrijvingAuto = ZERO;
     machineryDepreciation = ZERO;
     settlementDepreciation = ZERO;
@@ -49,5 +50,6 @@ public class Depreciation {
     for (Activum activum: officeList) {
       settlementDepreciation = settlementDepreciation.add(activum.getDepreciation());
     }
+    totalDepreciation = machineryDepreciation.add(settlementDepreciation);
   }
 }

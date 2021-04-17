@@ -46,10 +46,10 @@ class ActivaHelper {
 		totalActiva = totalActiva.add(newValue);
 		newValue = handleBalanceType(username, BalanceType.CURRENT_ASSETS);
 		totalActiva = totalActiva.add(newValue);
+		newValue = handleBalanceType(username, BalanceType.VAT_TO_BE_PAID);
 		BigInteger pensionValue = handleBalanceType(username, BalanceType.PENSION);
-        BigInteger nonCurrentAssetsValue = totalActiva.subtract(pensionValue);
+		BigInteger nonCurrentAssetsValue = totalActiva.subtract(pensionValue).subtract(newValue);
 		handleBalanceTypeWithEndValue(username, nonCurrentAssetsValue);
-		handleBalanceType(username, BalanceType.VAT_TO_BE_PAID);
 
 		return balanceMap;
 	}

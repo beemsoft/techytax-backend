@@ -1,35 +1,24 @@
-/**
- * Copyright 2014 Hans Beemsterboer
- * 
- * This file is part of the TechyTax program.
- *
- * TechyTax is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * TechyTax is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TechyTax; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
 package org.techytax.domain;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
+import org.techytax.domain.fiscal.ProfitAndLoss;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 @Data
+@Component
 public class PrivateWithdrawal {
 
 	private BigInteger totaleOnttrekking;
 
-	private BigInteger withdrawalCash;
-	
-	private BigInteger withdrawalPrivateUsageBusinessCar;
+	public void determineWithDrawal(ProfitAndLoss profitAndLoss, Map<BalanceType, FiscalBalance> balanceMap) {
+		FiscalBalance nonCurrent = balanceMap.get(BalanceType.NON_CURRENT_ASSETS);
+		FiscalBalance pension = balanceMap.get(BalanceType.PENSION);
 
+		BigInteger businessCapitalPreviousYear = nonCurrent.getBeginSaldo().add(pension.getBeginSaldo());
+		BigInteger businessCapitalCurrentYear = nonCurrent.getEndSaldo().add(pension.getEndSaldo());
+		totaleOnttrekking = businessCapitalCurrentYear.subtract(businessCapitalPreviousYear.add(profitAndLoss.getProfit().subtract(profitAndLoss.companyCosts.carCosts)));
+	}
 }

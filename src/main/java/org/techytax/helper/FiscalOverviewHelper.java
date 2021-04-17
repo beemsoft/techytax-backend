@@ -17,15 +17,17 @@ public class FiscalOverviewHelper {
 
 	private final ProfitAndLoss profitAndLoss;
 
-	public FiscalOverviewHelper(ActivaHelper activaHelper, ProfitAndLoss profitAndLoss) {
+	private final PrivateWithdrawal privateWithdrawal;
+
+	public FiscalOverviewHelper(ActivaHelper activaHelper, ProfitAndLoss profitAndLoss, PrivateWithdrawal privateWithdrawal) {
 		this.activaHelper = activaHelper;
 		this.profitAndLoss = profitAndLoss;
+		this.privateWithdrawal = privateWithdrawal;
 	}
 
-	public FiscalOverview createFiscalOverview(String username) throws Exception {
+	public FiscalOverview createFiscalOverview(String username) {
 		int bookYear = DateHelper.getFiscalYear();
 		FiscalOverview overview = new FiscalOverview();
-		PrivateWithdrawal privatWithdrawal = new PrivateWithdrawal();
 
 		overview.setJaar(bookYear);
 
@@ -33,8 +35,11 @@ public class FiscalOverviewHelper {
 		overview.setBalanceMap(balanceMap);
 		overview.setOfficeBottomValue(activaHelper.getOfficeBottomValue(username));
 
-		profitAndLoss.handleProfitAndLoss(privatWithdrawal, username);
+		profitAndLoss.handleProfitAndLoss(username);
 		overview.setProfitAndLoss(profitAndLoss);
+
+		privateWithdrawal.determineWithDrawal(profitAndLoss, balanceMap);
+		overview.setOnttrekking(privateWithdrawal);
 
 		return overview;
 	}

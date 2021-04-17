@@ -22,7 +22,7 @@ import static java.math.BigInteger.ZERO;
 
 @Component
 @Data
-class CompanyCosts {
+public class CompanyCosts {
 
   @Autowired
   @JsonIgnore
@@ -32,6 +32,7 @@ class CompanyCosts {
   @JsonIgnore
   private ActivumRepository activumRepository;
 
+  public BigInteger carCosts = ZERO;
   private BigInteger carAndTransportCosts = ZERO;
   private BigInteger otherCosts = ZERO;
   private BigInteger officeCosts = ZERO;
@@ -43,6 +44,8 @@ class CompanyCosts {
   private Collection<Cost> officeCostList;
 
   private BigInteger vatCorrectionForPrivateUsage;
+
+  private BigInteger totalCost;
 
   void calculate(String username) {
     transportCostList = costRepository.findCosts(username, CostConstants.TRAVEL_WITH_PUBLIC_TRANSPORT, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
@@ -62,6 +65,7 @@ class CompanyCosts {
     }
     totalBusinessCarCosts = totalBusinessCarCosts.add(new BigDecimal(vatCorrectionForPrivateUsage));
 
+    carCosts = AmountHelper.roundToInteger(totalBusinessCarCosts);
     carAndTransportCosts = AmountHelper.roundToInteger(totalBusinessCarCosts.add(totalTransportCosts));
     officeCostList = costRepository.findCosts(username, CostConstants.SETTLEMENT, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
     BigDecimal totalOfficeCosts = BigDecimal.ZERO;
@@ -83,5 +87,7 @@ class CompanyCosts {
     }
     totalFoodCosts = totalFoodCosts.multiply(BigDecimal.valueOf(CostConstants.FOOD_TAXFREE_PERCENTAGE));
     otherCosts = AmountHelper.roundToInteger(totalOtherCosts.add(totalFoodCosts));
+
+    totalCost = AmountHelper.roundToInteger(totalBusinessCarCosts.add(totalTransportCosts.add(totalFoodCosts.add(totalOfficeCosts.add(totalOtherCosts)))));
   }
 }
