@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Hans Beemsterboer
- * 
+ *
  * This file is part of the TechyTax program.
  *
  * TechyTax is free software; you can redistribute it and/or modify
@@ -27,7 +27,6 @@ import org.techytax.report.domain.ReportBalance;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,9 +40,7 @@ public class FiscalReportHelper {
 		List<ReportBalance> reportActiva = new ArrayList<>();
 		BigInteger totalBegin = ZERO;
 		BigInteger totalEnd = ZERO;
-		Iterator<Entry<BalanceType, FiscalBalance>> iterator = activaMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<BalanceType, FiscalBalance> entry = iterator.next();
+		for (Entry<BalanceType, FiscalBalance> entry : activaMap.entrySet()) {
 			ReportBalance reportActivum = new ReportBalance();
 			BalanceType activum = entry.getKey();
 			reportActivum.setDescription(activum.getKey());
@@ -83,9 +80,7 @@ public class FiscalReportHelper {
 		BigInteger totalEnd = ZERO;
 
 		if (passivaMap != null) {
-			Iterator<Entry<BalanceType, FiscalBalance>> iterator = passivaMap.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<BalanceType, FiscalBalance> entry = iterator.next();
+			for (Entry<BalanceType, FiscalBalance> entry : passivaMap.entrySet()) {
 				ReportBalance reportPassivum = new ReportBalance();
 				FiscalBalance fiscalBalance = entry.getValue();
 				BalanceType passivum = entry.getKey();

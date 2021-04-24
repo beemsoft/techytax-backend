@@ -47,7 +47,7 @@ public class Cost {
 	// TODO: in subclass? anders overbodig in fiscal overview
 	private BigDecimal vat = BigDecimal.ZERO;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate date;
 
 	@ManyToOne
@@ -64,7 +64,7 @@ public class Cost {
 		return costType.isBijschrijving();
 	}
 
-	public boolean isInvestment() { return costType != null ? costType.isInvestering(): false; }
+	public boolean isInvestment() { return costType != null && costType.isInvestering(); }
 
 	public void roundValues() {
 		if (amount != null) {

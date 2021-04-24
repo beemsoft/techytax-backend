@@ -158,6 +158,24 @@ public class FiscalRestController {
             cost.setDescription("Total VAT in");
             costRepository.save(cost);
         }
+        if (vatReport.getSentInvoices().compareTo(ZERO) > 0) {
+            Cost cost = new Cost();
+            cost.setUser(username);
+            cost.setDate(vatReport.getLatestTransactionDate());
+            cost.setCostType(CostConstants.INVOICE_PAID);
+            cost.setAmount(vatReport.getSentInvoices());
+            cost.setDescription("Total paid invoices");
+            costRepository.save(cost);
+        }
+        if (vatReport.getVatSaldo().compareTo(ZERO) > 0) {
+            Cost cost = new Cost();
+            cost.setUser(username);
+            cost.setDate(vatReport.getLatestTransactionDate());
+            cost.setCostType(CostConstants.VAT);
+            cost.setAmount(vatReport.getVatSaldo());
+            cost.setDescription("VAT saldo");
+            costRepository.save(cost);
+        }
     }
 
     private VatDeclarationData createVatDeclarationData(String username, VatReport vatReport) throws Exception {
@@ -195,7 +213,7 @@ public class FiscalRestController {
         return data;
     }
 
-    private void                                                                                                                                                                                addBookValues(VatReport vatReport, String username) {
+    private void addBookValues(VatReport vatReport, String username) {
         if (vatReport.getLatestTransactionDate().getYear() < LocalDate.now().getYear()) {
             // TODO: fix NPE vat saldo null for KOR
             if (vatReport.getVatSaldo().compareTo(ZERO) > 0) {
