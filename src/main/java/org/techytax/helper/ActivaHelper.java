@@ -97,7 +97,7 @@ class ActivaHelper {
 			fiscalBalance.setEndSaldo(newBookValue.getSaldo());
 		}
 		balanceMap.put(balanceType, fiscalBalance);
-		return newBookValue.getSaldo();
+		return fiscalBalance.getEndSaldo();
 	}
 
 	private BigInteger handleBalanceTypeWithEndValue(String username, BigInteger endValue) {
@@ -115,6 +115,9 @@ class ActivaHelper {
 
 	BigInteger getOfficeBottomValue(String username) {
 		Office office = activumRepository.findOffice(username);
-		return office.getTerrainValue();
+		if (office != null)
+			return office.getTerrainValue();
+		else
+			return ZERO;
 	}
 }

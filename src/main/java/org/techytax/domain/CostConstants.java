@@ -1,26 +1,4 @@
-/**
- * Copyright 2014 Hans Beemsterboer
- * 
- * This file is part of the TechyTax program.
- *
- * TechyTax is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * TechyTax is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TechyTax; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
 package org.techytax.domain;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public interface CostConstants {
 
@@ -48,7 +26,7 @@ public interface CostConstants {
 
 	CostType BUSINESS_CAR_OTHER_ACCOUNT = new CostType(19);
 	CostType BUSINESS_FOOD_OTHER_ACCOUNT = new CostType(20);
-	
+
 	CostType INVESTMENT_OTHER_ACCOUNT = new CostType(26);
 	CostType ADVERTORIAL = new CostType(27);
 	CostType ADVERTORIAL_NO_VAT = new CostType(28);
@@ -57,25 +35,22 @@ public interface CostConstants {
 	CostType ROAD_TAX = new CostType(31);
 	CostType EXPENSE_CREDIT_CARD = new CostType(32);
 	CostType INTEREST = new CostType(33);
-	
+
 	CostType VAT_CORRECTION_CAR_PRIVATE = new CostType(36);
 	CostType INVOICE_PAID = new CostType(38);
 	CostType INVOICE_SENT = new CostType(39);
 	CostType REPURCHASES = new CostType(40);
 	CostType SETTLEMENT = new CostType(41);
 	CostType SETTLEMENT_INTEREST = new CostType(42);
-	
+
 	CostType SETTLEMENT_OTHER_ACCOUNT = new CostType(44);
 	CostType SETTLEMENT_DISCOUNT = new CostType(45);
 	CostType INCOME_CURRENT_ACCOUNT_IGNORE = new CostType(46);
 	CostType EXPENSE_INSIDE_EU = new CostType(47);
 
-	BigInteger MAXIMALE_FOR = BigInteger.valueOf(8946);
-	BigDecimal FOR_PERCENTAGE = BigDecimal.valueOf(0.098f);
-
 	float FOOD_TAXFREE_PERCENTAGE = 0.735f;
-	
+
 	int INVESTMENT_MINIMUM_AMOUNT = 450;
-	
+
 
 }
