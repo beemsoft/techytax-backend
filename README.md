@@ -4,7 +4,7 @@ TechyTax backend is based on [jwt-spring-security-demo](https://github.com/szerh
 
 ## Requirements
 
-This demo is build with with Maven and Java 1.8.
+This application is built with Maven and Java 11.
 
 ## Usage
 
