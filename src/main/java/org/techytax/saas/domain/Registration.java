@@ -30,6 +30,7 @@ public class Registration {
     @GeneratedValue
     Long id = 0L;
     String initials;
+    String firstName;
     String prefix;
     String surname;
     String email;
