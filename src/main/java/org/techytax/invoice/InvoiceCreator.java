@@ -219,7 +219,7 @@ public class InvoiceCreator {
       cell.setBackgroundColor(color);
       subTable.addCell(cell);
 
-      String description = invoice.getProject().getActivityDescription() + ", " + invoice.getMonth() + " " + invoice.getSent().getYear();
+      String description = invoice.getProject().getActivityDescription() + ", " + invoice.getMonth() + " " + invoice.getSent().minusDays(20).getYear();
       if (invoice.getUnitsOfWork() < 0) {
         description = "Creditering van factuurnummer " + invoice.getOriginalInvoiceNumber() + " (" + invoice.getProject().getActivityDescription() + ")";
       }
