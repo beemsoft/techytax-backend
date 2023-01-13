@@ -5,7 +5,7 @@
 
     <groupId>org.techytax</groupId>
     <artifactId>techytax-backend</artifactId>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.0.6</version>
     <packaging>jar</packaging>
 
     <name>techytax-backend</name>

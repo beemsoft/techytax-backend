@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  h2db:
+    image: oscarfonts/h2:1.4.199
+    environment:
+      - OLD_INFORMATION_SCHEMA=true
+    volumes:
+      - C:/Users/Hans/Docker:/opt/h2-data
+    ports:
+      - "81:81"
+      - "1521:1521"
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - C:/Users/Hans/Docker:/home/techytax/invoices
+    ports:
+      - "8080:8080"
+    depends_on:
+      - h2db
+  frontend:
+    build:
+      context: ../techytax-ngx
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    depends_on:
+      - backend
