@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.techytax.domain.Activity;
 import org.techytax.domain.Invoice;
 import org.techytax.invoice.InvoiceCreator;
-import org.techytax.mail.MailHelper;
 import org.techytax.repository.ActivityRepository;
 import org.techytax.repository.InvoiceRepository;
 import org.techytax.saas.domain.Registration;
@@ -38,21 +36,18 @@ public class InvoiceRestController {
     private final ActivityRepository activityRepository;
 
     private InvoiceCreator invoiceCreator;
-    private MailHelper mailHelper;
 
     @Autowired
     public InvoiceRestController(JwtTokenUtil jwtTokenUtil,
                                  InvoiceRepository invoiceRepository,
                                  ActivityRepository activityRepository,
                                  InvoiceCreator invoiceCreator,
-                                 RegistrationRepository registrationRepository,
-                                 MailHelper mailHelper) {
+                                 RegistrationRepository registrationRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.invoiceRepository = invoiceRepository;
         this.activityRepository = activityRepository;
         this.invoiceCreator = invoiceCreator;
         this.registrationRepository = registrationRepository;
-        this.mailHelper = mailHelper;
     }
 
     @RequestMapping(value = "auth/invoice", method = RequestMethod.GET)
@@ -89,46 +84,6 @@ public class InvoiceRestController {
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "auth/invoice/send", method = RequestMethod.POST)
-    public ResponseEntity.BodyBuilder sendInvoicePdf(HttpServletRequest request, @RequestBody Invoice invoice) throws Exception {
-        String username = getUser(request);
-        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
-        invoice.setUser(username);
-        invoice.setSent(LocalDate.now());
-        byte[] contents;
-        if (registration.getCompanyData().getJobsInIndividualHealthcareNumber() == null) {
-            contents = invoiceCreator.createPdfInvoice(invoice, registration);
-        } else {
-            Collection<Activity> activities = activityRepository.getActivitiesForProject(username, invoice.getProject().getId(), LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
-            contents = invoiceCreator.createPdfInvoiceForBig(invoice, registration, activities);
-        }
-        mailHelper.sendInvoice(invoice.getHtmlText(), invoice, contents, registration);
-        invoiceRepository.save(invoice);
-        return ResponseEntity.ok();
-    }
-
-    @RequestMapping(value = "auth/invoice/{id}/send", method = RequestMethod.POST)
-    public ResponseEntity.BodyBuilder sendInvoicePdf(HttpServletRequest request, @PathVariable Long id, @RequestBody String htmlText) throws Exception {
-        Invoice invoice = invoiceRepository.findById(id).get();
-        String username = getUser(request);
-        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
-        invoice.setUser(username);
-        invoice.setSent(LocalDate.now());
-        byte[] contents = invoiceCreator.createPdfInvoice(invoice, registration);
-        mailHelper.sendInvoice(htmlText, invoice, contents, registration);
-//        invoiceRepository.save(invoice);
-        return ResponseEntity.ok();
-    }
-
-//    @RequestMapping(value = "auth/invoice/{id}/remind", method = RequestMethod.POST)
-//    public ResponseEntity.BodyBuilder sendReminder(HttpServletRequest request, @PathVariable Long id, @RequestBody String htmlText) throws Exception {
-//        Invoice invoice = invoiceRepository.findOne(id);
-//        String username = getUser(request);
-//        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
-//        MailHelper.sendReminder(htmlText, invoice, registration);
-//        return ResponseEntity.ok();
-//    }
 
     @RequestMapping(value = "auth/invoice/{id}", method = RequestMethod.DELETE)
     public void deleteInvoice(HttpServletRequest request, @PathVariable Long id) {
