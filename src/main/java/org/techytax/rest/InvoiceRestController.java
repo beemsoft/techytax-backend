@@ -1,5 +1,6 @@
 package org.techytax.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.techytax.domain.Activity;
 import org.techytax.domain.Invoice;
 import org.techytax.invoice.InvoiceCreator;
 import org.techytax.repository.ActivityRepository;
@@ -20,9 +22,13 @@ import org.techytax.saas.repository.RegistrationRepository;
 import org.techytax.security.JwtTokenUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Collection;
 
+@Slf4j
 @RestController
 public class InvoiceRestController {
 
@@ -83,6 +89,26 @@ public class InvoiceRestController {
         headers.setContentDispositionFormData(filename, filename);
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "auth/invoice/send", method = RequestMethod.POST)
+    public ResponseEntity.BodyBuilder sendInvoicePdf(HttpServletRequest request, @RequestBody Invoice invoice) throws Exception {
+        String username = getUser(request);
+        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
+        invoice.setUser(username);
+        invoice.setSent(LocalDate.now());
+        byte[] contents;
+        if (registration.getCompanyData().getJobsInIndividualHealthcareNumber() == null) {
+            contents = invoiceCreator.createPdfInvoice(invoice, registration);
+        } else {
+            Collection<Activity> activities = activityRepository.getActivitiesForProject(username, invoice.getProject().getId(), LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
+            contents = invoiceCreator.createPdfInvoiceForBig(invoice, registration, activities);
+        }
+        Path path = Paths.get("/home/techytax/invoices/factuur_"+invoice.getInvoiceNumber()+".pdf");
+        Files.write(path, contents);
+        log.info("Invoice saved: " + path.toAbsolutePath());
+        invoiceRepository.save(invoice);
+        return ResponseEntity.ok();
     }
 
     @RequestMapping(value = "auth/invoice/{id}", method = RequestMethod.DELETE)
