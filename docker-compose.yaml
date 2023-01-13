@@ -6,7 +6,7 @@ services:
     environment:
       - OLD_INFORMATION_SCHEMA=true
     volumes:
-      - C:/Users/Hans/Docker:/opt/h2-data
+      - ${MY_LOCAL_TECHYTAX_DIR}:/opt/h2-data
     ports:
       - "81:81"
       - "1521:1521"
@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - C:/Users/Hans/Docker:/home/techytax/invoices
+      - ${MY_LOCAL_TECHYTAX_DIR}:/home/techytax/invoices
     ports:
       - "8080:8080"
     depends_on:
