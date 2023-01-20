@@ -2,6 +2,7 @@ package org.techytax.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @DiscriminatorValue("C")
 @Getter
 @Setter
+@Slf4j
 public class BusinessCar extends Activum {
 
 	private BigInteger fiscalIncomeAddition;
@@ -21,21 +23,26 @@ public class BusinessCar extends Activum {
 	 * Vindt het privégebruik plaats later dan 4 jaar na het jaar waarin u de auto in gebruik hebt genomen? Dan neemt u
 	 * 1,5% in plaats van 2,7% van de catalogusprijs van de auto, inclusief btw en bpm.
 	 */
-	public BigInteger getVatCorrectionForPrivateUsage () {
-    LocalDate currentDate = LocalDate.now();
-    if (currentDate.isAfter(currentDate.withMonth(1).withDayOfMonth(1))
-      && currentDate.isBefore(currentDate.withMonth(4).withDayOfMonth(1))) {
-      LocalDate firstCarUsageDate = getStartDate();
-      BigDecimal correctionPercentage;
-      if (currentDate.getYear() - firstCarUsageDate.getYear() < 6) {
-        correctionPercentage = new BigDecimal(.027);
-      } else {
-        correctionPercentage = new BigDecimal(.015);
-      }
-      return getPurchasePrice().multiply(correctionPercentage).setScale(0, BigDecimal.ROUND_UP).toBigInteger();
-    } else {
-      return BigInteger.ZERO;
+    public BigDecimal getVatCorrectionForPrivateUsage() {
+        log.info("Calculate VAT correction for private usage business car");
+        LocalDate currentDate = LocalDate.now();
+        if (isTimeForVatCorrection(currentDate)) {
+            LocalDate firstCarUsageDate = getStartDate();
+            BigDecimal correctionPercentage;
+            if (currentDate.getYear() - firstCarUsageDate.getYear() < 5) {
+                correctionPercentage = new BigDecimal(".027");
+            } else {
+                correctionPercentage = new BigDecimal(".015");
+            }
+            return getPurchasePrice().multiply(correctionPercentage).setScale(0, BigDecimal.ROUND_UP);
+        } else {
+            return BigDecimal.ZERO;
+        }
     }
-	}
-	
+
+    private boolean isTimeForVatCorrection(LocalDate currentDate) {
+        return currentDate.isAfter(currentDate.withMonth(1).withDayOfMonth(1))
+                && currentDate.isBefore(currentDate.withMonth(4).withDayOfMonth(1));
+    }
+
 }

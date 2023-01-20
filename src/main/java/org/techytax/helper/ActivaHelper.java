@@ -1,9 +1,11 @@
 package org.techytax.helper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
 import org.techytax.domain.BookValue;
+import org.techytax.domain.BusinessCar;
 import org.techytax.domain.FiscalBalance;
 import org.techytax.domain.Office;
 import org.techytax.repository.ActivumRepository;
@@ -21,7 +23,12 @@ import java.util.Map;
 import static java.math.BigInteger.ZERO;
 
 @Component
+@Slf4j
+public
 class ActivaHelper {
+
+	public static final LocalDate YEAR_START = LocalDate.now().minusYears(1).withDayOfYear(1);
+	public static final LocalDate YEAR_END = LocalDate.now().withDayOfYear(1).minusDays(1);
 
 	private final BookRepository bookRepository;
 
@@ -119,5 +126,24 @@ class ActivaHelper {
 			return office.getTerrainValue();
 		else
 			return ZERO;
+	}
+
+	public BigInteger getVatCorrectionForPrivateUsageBusinessCar(String username) {
+		Collection<BusinessCar> carList = activumRepository.findBusinessCars(username, YEAR_START, YEAR_END);
+		BigInteger vatCorrectionForPrivateUsage = BigInteger.ZERO;
+		for (BusinessCar activum: carList) {
+			BigDecimal privateUsage = activum.getVatCorrectionForPrivateUsage();
+			double proportion = 1.0d;
+			if (activum.getEndDate() != null) {
+				proportion = activum.getEndDate().getMonthValue() / 12.0d;
+			}
+			if (activum.getStartDate().getYear() == LocalDate.now().getYear() - 1) {
+				proportion = 1.0d - activum.getStartDate().getMonthValue() / 12.0d;
+			}
+			privateUsage = privateUsage.multiply(BigDecimal.valueOf(proportion));
+			log.info("Private usage for {} is {}", activum.getDescription(), privateUsage);
+			vatCorrectionForPrivateUsage = vatCorrectionForPrivateUsage.add(privateUsage.toBigInteger());
+		}
+	    return vatCorrectionForPrivateUsage;
 	}
 }

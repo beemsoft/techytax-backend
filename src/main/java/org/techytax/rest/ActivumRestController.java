@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.Activum;
 import org.techytax.domain.BusinessCar;
 import org.techytax.domain.Office;
+import org.techytax.helper.ActivaHelper;
 import org.techytax.repository.ActivumRepository;
 import org.techytax.security.JwtTokenUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
+import java.math.BigInteger;
 import java.util.Collection;
 
 @RestController
@@ -28,6 +29,9 @@ public class ActivumRestController {
 
     @Autowired
     private ActivumRepository activumRepository;
+
+    @Autowired
+    private ActivaHelper activaHelper;
 
     @RequestMapping(value = "auth/activum", method = RequestMethod.GET)
     public Collection<Activum> getActiva(HttpServletRequest request) {
@@ -56,10 +60,10 @@ public class ActivumRestController {
         activumRepository.save(activum);
     }
 
-    @RequestMapping(value = "auth/activum/car", method = { RequestMethod.GET })
-    public BusinessCar getActivumCar(HttpServletRequest request) {
+    @RequestMapping(value = "auth/activum/car/vat-correction-for-private-usage", method = { RequestMethod.GET })
+    public BigInteger getActivumCar(HttpServletRequest request) {
         String username = getUser(request);
-        return activumRepository.findBusinessCar(username, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+        return activaHelper.getVatCorrectionForPrivateUsageBusinessCar(username);
     }
 
     @RequestMapping(value = "auth/activum/{id}", method = { RequestMethod.GET })

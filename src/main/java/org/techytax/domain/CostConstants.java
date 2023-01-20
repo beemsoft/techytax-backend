@@ -36,6 +36,9 @@ public interface CostConstants {
 	CostType EXPENSE_CREDIT_CARD = new CostType(32);
 	CostType INTEREST = new CostType(33);
 
+	CostType VAT_CORRECTION = new CostType(35);
+
+	@Deprecated  // This is automatically derived from Business car data
 	CostType VAT_CORRECTION_CAR_PRIVATE = new CostType(36);
 	CostType INVOICE_PAID = new CostType(38);
 	CostType INVOICE_SENT = new CostType(39);

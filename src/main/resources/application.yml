@@ -10,7 +10,7 @@ jwt:
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:tcp://localhost:9092/~/tt_db
+    url: jdbc:h2:tcp://localhost:1521/tt_db
     password:
     username: sa
 
@@ -44,12 +44,3 @@ spring:
       starttls:
         enable: true
 
-mail:
-  from:
-  host:
-
-logging:
-  level:
-     org.hibernate: DEBUG
-#    org.springframework:
-#      security: DEBUG
