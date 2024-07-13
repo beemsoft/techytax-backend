@@ -7,7 +7,12 @@ import org.techytax.domain.FiscalBalance;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * Fiscal pension has been deprecated:
+ * https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/winst/inkomstenbelasting/verandering_inkomstenbelasting_vorige_jaren/veranderingen-inkomstenbelasting-2023/fiscale-oudedagsreserve-afgeschaft
+ */
 @Component
+@Deprecated
 public class FiscalPension {
   private static final BigInteger MAXIMAL_FISCAL_PENSION = BigInteger.valueOf(9218);
   private static final BigDecimal FOR_PERCENTAGE = BigDecimal.valueOf(0.0944f);
