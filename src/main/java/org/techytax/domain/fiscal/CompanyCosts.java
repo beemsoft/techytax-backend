@@ -43,7 +43,7 @@ public class CompanyCosts {
   private Collection<Cost> foodCostList;
   private Collection<Cost> officeCostList;
 
-  private BigInteger vatCorrectionForPrivateUsage;
+  private BigInteger vatCorrectionForPrivateUsage = BigInteger.ZERO;
 
   private BigInteger totalCost;
 

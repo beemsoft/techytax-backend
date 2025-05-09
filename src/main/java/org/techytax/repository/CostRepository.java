@@ -11,6 +11,8 @@ import java.util.Collection;
 
 public interface CostRepository extends CrudRepository<Cost, Long> {
 
+    @Query("select c from Cost c " +
+            "where c.user = ?1 order by c.date desc")
     Collection<Cost> findByUser(String username);
 
     @Query("select c from Cost c " +

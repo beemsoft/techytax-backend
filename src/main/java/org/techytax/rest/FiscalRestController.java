@@ -80,7 +80,7 @@ public class FiscalRestController {
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.POST)
     public void sendFiscalData(HttpServletRequest request, @RequestBody VatReport vatReport) throws Exception {
         String username = getUser(request);
-        if (vatReport.getInvestments() != null && vatReport.getInvestments().size() > 0) {
+        if (vatReport.getInvestments() != null && !vatReport.getInvestments().isEmpty()) {
             saveActiva(vatReport.getInvestments(), username);
         }
         saveCosts(vatReport, username);
