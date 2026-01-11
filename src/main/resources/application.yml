@@ -10,9 +10,9 @@ jwt:
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:D:/Docker/tt_db;AUTO_SERVER=true
+    url: jdbc:h2:D:/Docker/tt_db_2;AUTO_SERVER=true;NON_KEYWORDS=USER
 #    url: jdbc:h2:tcp://localhost:1521/tt_db   Using Docker
-    password:
+    password: test
     username: sa
 
   jpa:
