@@ -66,18 +66,19 @@ The API will be available at `http://localhost:8080`.
 ### Database
 By default, TechyTax uses an embedded **H2** database. The data is persisted in a local file (defined in `application.yml`).
 
-To use another database (e.g., MySQL), update `src/main/resources/application.yml`:
+Example configuration in `src/main/resources/application.yml`:
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/techytax
-    username: your_user
-    password: your_password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:<your db dir>/tt_db;AUTO_SERVER=true
+    username: sa
+    password: password
   jpa:
+    database: H2
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 ```
 
 ### Security
