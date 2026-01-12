@@ -13,7 +13,7 @@ import org.techytax.repository.ActivityRepository;
 import org.techytax.security.JwtTokenUtil;
 import org.techytax.security.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Collection;
 

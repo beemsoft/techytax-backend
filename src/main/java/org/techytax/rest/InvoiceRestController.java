@@ -24,7 +24,7 @@ import org.techytax.saas.repository.RegistrationRepository;
 import org.techytax.security.JwtTokenUtil;
 import org.techytax.security.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

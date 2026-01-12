@@ -9,7 +9,7 @@ import org.techytax.domain.PrepaidTax;
 import org.techytax.repository.CostRepository;
 import org.techytax.util.DateHelper;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;

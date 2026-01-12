@@ -2,12 +2,14 @@ package org.techytax.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,11 +35,15 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String getUsernameFromToken(String token) {
         String username;
         try {
             final Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
+            username = (claims != null) ? claims.getSubject() : null;
         } catch (Exception e) {
             username = null;
         }
@@ -48,7 +54,7 @@ public class JwtTokenUtil implements Serializable {
         LocalDate created;
         try {
             final Claims claims = getClaimsFromToken(token);
-            created = LocalDate.ofEpochDay((Long) claims.get(CLAIM_KEY_CREATED));
+            created = (claims != null) ? LocalDate.ofEpochDay(((Number) claims.get(CLAIM_KEY_CREATED)).longValue()) : null;
         } catch (Exception e) {
             created = null;
         }
@@ -59,7 +65,7 @@ public class JwtTokenUtil implements Serializable {
         Date expiration;
         try {
             final Claims claims = getClaimsFromToken(token);
-            expiration = claims.getExpiration();
+            expiration = (claims != null) ? claims.getExpiration() : null;
         } catch (Exception e) {
             expiration = null;
         }
@@ -70,7 +76,7 @@ public class JwtTokenUtil implements Serializable {
         String audience;
         try {
             final Claims claims = getClaimsFromToken(token);
-            audience = (String) claims.get(CLAIM_KEY_AUDIENCE);
+            audience = (String) (claims != null ? claims.get(CLAIM_KEY_AUDIENCE) : null);
         } catch (Exception e) {
             audience = null;
         }
@@ -78,16 +84,16 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private Claims getClaimsFromToken(String token) {
-        Claims claims;
+        if (token == null) return null;
         try {
-            claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (Exception e) {
-            claims = null;
+            return null;
         }
-        return claims;
     }
 
     private Date generateExpirationDate() {
@@ -96,11 +102,11 @@ public class JwtTokenUtil implements Serializable {
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        return (expiration != null) && expiration.before(new Date());
     }
 
     private Boolean isCreatedBeforeLastPasswordReset(LocalDate created, LocalDate lastPasswordReset) {
-        return (lastPasswordReset != null && created.isBefore(lastPasswordReset));
+        return (lastPasswordReset != null && created != null && created.isBefore(lastPasswordReset));
     }
 
     private String generateAudience() {
@@ -116,15 +122,15 @@ public class JwtTokenUtil implements Serializable {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_AUDIENCE, generateAudience());
-        claims.put(CLAIM_KEY_CREATED, new Date());
+        claims.put(CLAIM_KEY_CREATED, LocalDate.now().toEpochDay());
         return generateToken(claims);
     }
 
     String generateToken(Map<String, Object> claims) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .claims(claims)
+                .expiration(generateExpirationDate())
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -132,9 +138,8 @@ public class JwtTokenUtil implements Serializable {
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         final LocalDate created = getCreatedDateFromToken(token);
-        //final Date expiration = getExpirationDateFromToken(token);
         return (
-                username.equals(user.getUsername())
+                username != null && username.equals(user.getUsername())
                         && !isTokenExpired(token)
                         && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
     }

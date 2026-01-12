@@ -1,10 +1,11 @@
 # config context path to "/" by setting an empty string
 server:
-  contextPath:
+  servlet:
+    context-path: /
 
 jwt:
   header: Authorization
-  secret: mySecret
+  secret: v9y$B&E)H+MbQeThWmZq4t7w!z%C*F-JaNcRfUjXn2r5u8x/A?D(G+KbPeSgVkYp
   expiration: 604800
 
 spring:

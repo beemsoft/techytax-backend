@@ -49,6 +49,10 @@ public class CompanyCosts {
 
   private BigInteger totalCost;
 
+  public BigInteger getTotalCost() {
+    return totalCost;
+  }
+
   void calculate(User user) {
     transportCostList = costRepository.findCosts(user, CostConstants.TRAVEL_WITH_PUBLIC_TRANSPORT, YEAR_START, YEAR_END);
     BigDecimal totalTransportCosts = ZERO;

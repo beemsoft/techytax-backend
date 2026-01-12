@@ -16,7 +16,7 @@ import org.techytax.repository.ActivumRepository;
 import org.techytax.security.JwtTokenUtil;
 import org.techytax.security.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.util.Collection;
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.techytax.domain.CostType;
 import org.techytax.repository.CostTypeRepository;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

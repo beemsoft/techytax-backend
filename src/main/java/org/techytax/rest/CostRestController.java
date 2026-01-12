@@ -13,7 +13,7 @@ import org.techytax.repository.CostRepository;
 import org.techytax.security.JwtTokenUtil;
 import org.techytax.security.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 @RestController

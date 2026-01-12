@@ -3,9 +3,9 @@ package org.techytax.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQuery;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -25,6 +25,10 @@ public class Office extends Activum {
 	
 	private BigInteger wozValue;
 	
+	public BigInteger getTerrainValue() {
+		return terrainValue;
+	}
+
 	private BigInteger terrainValue;
 	
 //	@Type(type = "encryptedInteger")

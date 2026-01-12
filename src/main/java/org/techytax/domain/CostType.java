@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Immutable;
 import org.techytax.external.domain.ExternalCostType;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static org.techytax.domain.CostConstants.SETTLEMENT;
 

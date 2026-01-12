@@ -26,8 +26,8 @@ import org.techytax.security.JwtTokenUtil;
 import org.techytax.security.repository.AuthorityRepository;
 import org.techytax.security.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Arrays;
 

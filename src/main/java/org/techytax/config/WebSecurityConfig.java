@@ -5,23 +5,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.techytax.security.JwtAuthenticationEntryPoint;
 import org.techytax.security.JwtAuthenticationTokenFilter;
+
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class WebSecurityConfig {
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -30,16 +34,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(new BCryptPasswordEncoder());
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -47,44 +48,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationTokenFilter();
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-          .cors().disable()
-          // we don't need CSRF because our token is invulnerable
-          .csrf().disable()
-
-          .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
-          // don't create session
-          .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
-          .authorizeRequests()
-          .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-          // allow anonymous resource requests
-          .antMatchers(
-            HttpMethod.GET,
-            "/*.html",
-            "/favicon.ico",
-            "/**/*.html",
-            "/**/*.css",
-            "/**/*.js"
-          ).permitAll()
-          .antMatchers("/register").permitAll()
-          .antMatchers("/auth/**").permitAll();
-
-//        httpSecurity.authorizeRequests().antMatchers("/").permitAll().and()
-//                .authorizeRequests().antMatchers("/console/**").permitAll().anyRequest().anonymous();
-//
-//        httpSecurity.csrf().disable();
-//
-//        httpSecurity.headers().frameOptions().disable();
+          .cors(AbstractHttpConfigurer::disable)
+          .csrf(AbstractHttpConfigurer::disable)
+          .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+          .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .authorizeHttpRequests(auth -> auth
+            .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/*.html", HttpMethod.GET.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/favicon.ico", HttpMethod.GET.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/**/*.html", HttpMethod.GET.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/**/*.css", HttpMethod.GET.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/**/*.js", HttpMethod.GET.name())).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/users/authenticate")).permitAll()
+            .anyRequest().authenticated()
+          );
 
         // Custom JWT based security filter
-//        httpSecurity
-//                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         // disable page caching
-        httpSecurity.headers().cacheControl();
+        httpSecurity.headers(headers -> headers.cacheControl(cache -> cache.disable()));
+        
+        return httpSecurity.build();
     }
 }
