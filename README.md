@@ -95,6 +95,13 @@ docker-compose up --build
 
 ---
 
+## 🖥️ Frontend
+
+The companion frontend for this backend is built with Angular and can be found here:
+👉 **[TechyTax Frontend (techytax-ngx)](https://github.com/beemsoft/techytax-ngx)**
+
+---
+
 ## 📜 License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
