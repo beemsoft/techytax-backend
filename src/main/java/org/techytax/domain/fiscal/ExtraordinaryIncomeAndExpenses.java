@@ -11,5 +11,13 @@ import static java.math.BigInteger.ZERO;
 @Data
 public class ExtraordinaryIncomeAndExpenses {
 
+  public BigInteger getOtherExtraordinaryIncome() {
+    return otherExtraordinaryIncome;
+  }
+
+  public void setOtherExtraordinaryIncome(BigInteger otherExtraordinaryIncome) {
+    this.otherExtraordinaryIncome = otherExtraordinaryIncome;
+  }
+
   private BigInteger otherExtraordinaryIncome = ZERO;
 }

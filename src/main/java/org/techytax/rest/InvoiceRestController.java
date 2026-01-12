@@ -1,6 +1,7 @@
 package org.techytax.rest;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.Activity;
 import org.techytax.domain.Invoice;
 import org.techytax.invoice.InvoiceCreator;
+import org.techytax.model.security.User;
 import org.techytax.repository.ActivityRepository;
 import org.techytax.repository.InvoiceRepository;
 import org.techytax.saas.domain.Registration;
 import org.techytax.saas.repository.RegistrationRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.file.Files;
@@ -28,9 +31,10 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Collection;
 
-@Slf4j
 @RestController
 public class InvoiceRestController {
+
+    private static final Logger log = LoggerFactory.getLogger(InvoiceRestController.class);
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -40,6 +44,7 @@ public class InvoiceRestController {
     private final InvoiceRepository invoiceRepository;
     private final RegistrationRepository registrationRepository;
     private final ActivityRepository activityRepository;
+    private final UserRepository userRepository;
 
     private InvoiceCreator invoiceCreator;
 
@@ -48,38 +53,40 @@ public class InvoiceRestController {
                                  InvoiceRepository invoiceRepository,
                                  ActivityRepository activityRepository,
                                  InvoiceCreator invoiceCreator,
-                                 RegistrationRepository registrationRepository) {
+                                 RegistrationRepository registrationRepository,
+                                 UserRepository userRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.invoiceRepository = invoiceRepository;
         this.activityRepository = activityRepository;
         this.invoiceCreator = invoiceCreator;
         this.registrationRepository = registrationRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(value = "auth/invoice", method = RequestMethod.GET)
     public Collection<Invoice> getInvoices(HttpServletRequest request) {
-        String username = getUser(request);
-        return invoiceRepository.findByUser(username);
+        User user = getUser(request);
+        return invoiceRepository.findByUser(user);
     }
 
     @RequestMapping(value = "auth/invoice/latest-period", method = RequestMethod.GET)
     public Collection<Invoice> getInvoicesForLatestPeriod(HttpServletRequest request) {
-        String username = getUser(request);
-        return invoiceRepository.findInvoices(username, LocalDate.now().minusMonths(3).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
+        User user = getUser(request);
+        return invoiceRepository.findInvoices(user, LocalDate.now().minusMonths(3).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
     }
 
     @RequestMapping(value = "auth/invoice", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveInvoice(HttpServletRequest request, @RequestBody Invoice invoice) {
-        String username = getUser(request);
-        invoice.setUser(username);
+        User user = getUser(request);
+        invoice.setUser(user);
         invoiceRepository.save(invoice);
     }
 
     @RequestMapping(value = "auth/invoice/{id}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> createInvoicePdf(HttpServletRequest request, @PathVariable Long id) {
         Invoice invoice = invoiceRepository.findById(id).get();
-        String username = getUser(request);
-        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
+        User user = getUser(request);
+        Registration registration = registrationRepository.findByUser(user).stream().findFirst().get();
         byte[] contents = invoiceCreator.createPdfInvoice(invoice, registration);
 
         HttpHeaders headers = new HttpHeaders();
@@ -93,15 +100,15 @@ public class InvoiceRestController {
 
     @RequestMapping(value = "auth/invoice/send", method = RequestMethod.POST)
     public ResponseEntity.BodyBuilder sendInvoicePdf(HttpServletRequest request, @RequestBody Invoice invoice) throws Exception {
-        String username = getUser(request);
-        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
-        invoice.setUser(username);
+        User user = getUser(request);
+        Registration registration = registrationRepository.findByUser(user).stream().findFirst().get();
+        invoice.setUser(user);
         invoice.setSent(LocalDate.now());
         byte[] contents;
         if (registration.getCompanyData().getJobsInIndividualHealthcareNumber() == null) {
             contents = invoiceCreator.createPdfInvoice(invoice, registration);
         } else {
-            Collection<Activity> activities = activityRepository.getActivitiesForProject(username, invoice.getProject().getId(), LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
+            Collection<Activity> activities = activityRepository.getActivitiesForProject(user, invoice.getProject().getId(), LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
             contents = invoiceCreator.createPdfInvoiceForBig(invoice, registration, activities);
         }
         Path path = Paths.get("/home/techytax/invoices/factuur_"+invoice.getInvoiceNumber()+".pdf");
@@ -116,8 +123,9 @@ public class InvoiceRestController {
         invoiceRepository.deleteById(id);
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

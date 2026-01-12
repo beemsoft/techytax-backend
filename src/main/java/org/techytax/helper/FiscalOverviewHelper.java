@@ -9,6 +9,8 @@ import org.techytax.domain.fiscal.FiscalPension;
 import org.techytax.domain.fiscal.ProfitAndLoss;
 import org.techytax.util.DateHelper;
 
+import org.techytax.model.security.User;
+
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -28,17 +30,17 @@ public class FiscalOverviewHelper {
 		this.fiscalPension = fiscalPension;
 	}
 
-	public FiscalOverview createFiscalOverview(String username) {
+	public FiscalOverview createFiscalOverview(User user) {
 		int bookYear = DateHelper.getFiscalYear();
 		FiscalOverview overview = new FiscalOverview();
 
 		overview.setJaar(bookYear);
 
-		Map<BalanceType, FiscalBalance> balanceMap = activaHelper.handleActiva(username);
+		Map<BalanceType, FiscalBalance> balanceMap = activaHelper.handleActiva(user);
 		overview.setBalanceMap(balanceMap);
-		overview.setOfficeBottomValue(activaHelper.getOfficeBottomValue(username));
+		overview.setOfficeBottomValue(activaHelper.getOfficeBottomValue(user));
 
-		profitAndLoss.handleProfitAndLoss(username);
+		profitAndLoss.handleProfitAndLoss(user);
 		overview.setProfitAndLoss(profitAndLoss);
 
 		privateWithdrawal.determineWithDrawal(profitAndLoss, balanceMap);

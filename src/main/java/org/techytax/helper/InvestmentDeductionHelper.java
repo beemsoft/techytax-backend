@@ -21,7 +21,7 @@ public class InvestmentDeductionHelper {
 		BigInteger totalInvestmentDeduction = BigInteger.ZERO;
 		for (Cost cost : costList) {
 			Activum activum = new Activum();
-//			activum.setUser(UserCredentialManager.getUser());
+//			activum.setUsername(UserCredentialManager.getUsername());
 //			activum.setCost(cost);
 //			activum = activumDao.getActivumForCost(cost);
 			if (activum != null && activum.getBalanceType() == BalanceType.MACHINERY) {

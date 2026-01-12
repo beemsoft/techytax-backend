@@ -3,6 +3,8 @@ package org.techytax.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.techytax.model.security.User;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -27,6 +31,46 @@ import java.math.BigInteger;
 @Setter
 public class BookValue {
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public BalanceType getBalanceType() {
+		return balanceType;
+	}
+
+	public void setBalanceType(BalanceType balanceType) {
+		this.balanceType = balanceType;
+	}
+
+	public int getBookYear() {
+		return bookYear;
+	}
+
+	public void setBookYear(int bookYear) {
+		this.bookYear = bookYear;
+	}
+
+	public BigInteger getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigInteger saldo) {
+		this.saldo = saldo;
+	}
+
 	static final String HISTORY = "org.techytax.domain.BookValue.HISTORY";
 	static final String FOR_YEAR = "org.techytax.domain.BookValue.FOR_YEAR";
 	public static final String GET = "org.techytax.domain.BookValue.GET";
@@ -37,7 +81,9 @@ public class BookValue {
 	protected Long id = 0L;
 
 	@NotNull
-	private String user;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Enumerated(EnumType.ORDINAL)
 	private BalanceType balanceType;

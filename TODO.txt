@@ -1,0 +1,4 @@
+- upgrade SpringBoot
+- Migrate H2 db to latest
+- upgrade Docker image
+  - fix vulnerabilities

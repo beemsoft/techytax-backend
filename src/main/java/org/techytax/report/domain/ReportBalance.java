@@ -27,6 +27,46 @@ import java.math.BigInteger;
 @Data
 public class ReportBalance {
 
+	public BigDecimal getAanschafKosten() {
+		return aanschafKosten;
+	}
+
+	public void setAanschafKosten(BigDecimal aanschafKosten) {
+		this.aanschafKosten = aanschafKosten;
+	}
+
+	public BigInteger getBookValueBegin() {
+		return bookValueBegin;
+	}
+
+	public void setBookValueBegin(BigInteger bookValueBegin) {
+		this.bookValueBegin = bookValueBegin;
+	}
+
+	public BigInteger getBookValueEnd() {
+		return bookValueEnd;
+	}
+
+	public void setBookValueEnd(BigInteger bookValueEnd) {
+		this.bookValueEnd = bookValueEnd;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigInteger getRestwaarde() {
+		return restwaarde;
+	}
+
+	public void setRestwaarde(BigInteger restwaarde) {
+		this.restwaarde = restwaarde;
+	}
+
 	private BigDecimal aanschafKosten;
 	private BigInteger bookValueBegin;
 	private BigInteger bookValueEnd;

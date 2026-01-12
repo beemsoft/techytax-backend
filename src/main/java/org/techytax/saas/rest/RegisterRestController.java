@@ -1,6 +1,7 @@
 package org.techytax.saas.rest;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,9 +31,10 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Arrays;
 
-@Slf4j
 @RestController
 public class RegisterRestController {
+
+  private static final Logger log = LoggerFactory.getLogger(RegisterRestController.class);
 
   @Value("${jwt.header}")
   private String tokenHeader;
@@ -73,7 +75,7 @@ public class RegisterRestController {
   @RequestMapping(value = "register", method = RequestMethod.POST)
   @Transactional
   public void addRegistration(HttpServletRequest request, @RequestBody RegisterUser registerUser) {
-    if (!registrationRepository.findByUser(registerUser.getUsername()).isEmpty()) {
+    if (userRepository.findByUsername(registerUser.getUsername()) != null) {
       throw new RuntimeException("Gebruiker bestaat al");
     }
     User user = new User();
@@ -87,24 +89,24 @@ public class RegisterRestController {
     user.setLastname(registerUser.getLastName());
     user.setLastPasswordResetDate(LocalDate.now());
     userRepository.save(user);
-    log.info("addRegistration called by user: {}", getUser(request));
+    log.info("addRegistration called by user: {}", getUser(request).getUsername());
   }
 
   @RequestMapping(value = "auth/register", method = RequestMethod.PUT)
   @Transactional
   public void updateRegistration(HttpServletRequest request, @RequestBody Registration registration) {
-    String username = getUser(request);
-    registration.setUser(username);
+    User user = getUser(request);
+    registration.setUser(user);
     registrationRepository.save(registration);
-    log.info("updateRegistration called by user: {}", getUser(request));
+    log.info("updateRegistration called by user: {}", user.getUsername());
   }
 
   @RequestMapping(value = "auth/register", method = RequestMethod.GET)
   public Registration getRegistration(HttpServletRequest request) {
-    String username = getUser(request);
+    User user = getUser(request);
     Registration registration;
     try {
-      registration = registrationRepository.findByUser(username).stream().findFirst().get();
+      registration = registrationRepository.findByUser(user).stream().findFirst().get();
     } catch (Exception e) {
       throw new RuntimeException("Vul eerst je gegevens in");
     }
@@ -114,21 +116,22 @@ public class RegisterRestController {
   @Transactional
   @RequestMapping(value = "auth/register", method = RequestMethod.DELETE)
   public void deleteRegistration(HttpServletRequest request) {
-    String username = getUser(request);
-    activumRepository.deleteActivumsByUser(username);
-    bookRepository.deleteBookValues(username);
-    costMatchRepository.deleteCostMatchesByUser(username);
-    costRepository.deleteCostsByUser(username);
-    customerRepository.deleteCustomersByUser(username);
-    invoiceRepository.deleteInvoicesByUser(username);
-    projectRepository.deleteProjectsByUser(username);
-    userRepository.deleteUser(username);
-    registrationRepository.deleteRegistrationByUser(username);
-    log.info("deleteRegistration called by user: {}", getUser(request));
+    User user = getUser(request);
+    activumRepository.deleteActivumsByUser(user);
+    bookRepository.deleteBookValues(user);
+    costMatchRepository.deleteCostMatchesByUser(user);
+    costRepository.deleteCostsByUser(user);
+    customerRepository.deleteCustomersByUser(user);
+    invoiceRepository.deleteInvoicesByUser(user);
+    projectRepository.deleteProjectsByUser(user);
+    userRepository.deleteById(user.getId());
+    registrationRepository.deleteRegistrationByUser(user);
+    log.info("deleteRegistration called by user: {}", user.getUsername());
   }
 
-  private String getUser(HttpServletRequest request) {
+  private User getUser(HttpServletRequest request) {
     String token = request.getHeader(tokenHeader);
-    return jwtTokenUtil.getUsernameFromToken(token);
+    String username = jwtTokenUtil.getUsernameFromToken(token);
+    return userRepository.findByUsername(username);
   }
 }

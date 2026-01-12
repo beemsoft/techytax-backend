@@ -1,6 +1,6 @@
 /**
  * Copyright 2012 Hans Beemsterboer
- * 
+ *
  * This file is part of the TechyTax program.
  *
  * TechyTax is free software; you can redistribute it and/or modify
@@ -26,6 +26,30 @@ import java.util.List;
 
 @Data
 public class BalanceReport {
+
+	public List<ReportBalance> getBalanceList() {
+		return balanceList;
+	}
+
+	public void setBalanceList(List<ReportBalance> balanceList) {
+		this.balanceList = balanceList;
+	}
+
+	public BigInteger getTotalBeginValue() {
+		return totalBeginValue;
+	}
+
+	public void setTotalBeginValue(BigInteger totalBeginValue) {
+		this.totalBeginValue = totalBeginValue;
+	}
+
+	public BigInteger getTotalEndValue() {
+		return totalEndValue;
+	}
+
+	public void setTotalEndValue(BigInteger totalEndValue) {
+		this.totalEndValue = totalEndValue;
+	}
 
 	private List<ReportBalance> balanceList;
 	private BigInteger totalBeginValue;

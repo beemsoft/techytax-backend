@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.BookValue;
+import org.techytax.model.security.User;
 import org.techytax.repository.BookRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -26,10 +28,13 @@ public class BookRestController {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value = "auth/book", method = RequestMethod.GET)
     public Collection<BookValue> getBookValues(HttpServletRequest request) {
-        String username = getUser(request);
-        return bookRepository.findByUser(username);
+        User user = getUser(request);
+        return bookRepository.findByUser(user);
     }
 
     @RequestMapping(value = "auth/book/{id}", method = RequestMethod.GET)
@@ -39,8 +44,8 @@ public class BookRestController {
 
     @RequestMapping(value = "auth/book", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveBookValue(HttpServletRequest request, @RequestBody BookValue bookValue) {
-        String username = getUser(request);
-        bookValue.setUser(username);
+        User user = getUser(request);
+        bookValue.setUser(user);
         bookRepository.save(bookValue);
     }
 
@@ -49,8 +54,9 @@ public class BookRestController {
         bookRepository.deleteById(id);
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

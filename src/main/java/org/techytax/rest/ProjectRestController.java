@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.Project;
+import org.techytax.model.security.User;
 import org.techytax.repository.ProjectRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -26,16 +28,19 @@ public class ProjectRestController {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value = "auth/project", method = RequestMethod.GET)
     public Collection<Project> getProjects(HttpServletRequest request) {
-        String username = getUser(request);
-        return projectRepository.findByUser(username);
+        User user = getUser(request);
+        return projectRepository.findByUser(user);
     }
 
     @RequestMapping(value = "auth/project/current", method = RequestMethod.GET)
     public Collection<Project> getCurrentProjects(HttpServletRequest request) {
-        String username = getUser(request);
-        return projectRepository.findCurrentProjects(username);
+        User user = getUser(request);
+        return projectRepository.findCurrentProjects(user);
     }
 
     @RequestMapping(value = "auth/project/{id}", method = RequestMethod.GET)
@@ -45,8 +50,8 @@ public class ProjectRestController {
 
     @RequestMapping(value = "auth/project", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveProject(HttpServletRequest request, @RequestBody Project project) {
-        String username = getUser(request);
-        project.setUser(username);
+        User user = getUser(request);
+        project.setUser(user);
         projectRepository.save(project);
     }
 
@@ -55,8 +60,9 @@ public class ProjectRestController {
         projectRepository.deleteById(id);
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

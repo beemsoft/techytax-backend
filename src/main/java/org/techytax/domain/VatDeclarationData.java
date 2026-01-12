@@ -10,6 +10,134 @@ import static java.math.BigInteger.ZERO;
 @Data
 public class VatDeclarationData {
 
+	public String getFiscalNumber() {
+		return fiscalNumber;
+	}
+
+	public void setFiscalNumber(String fiscalNumber) {
+		this.fiscalNumber = fiscalNumber;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getInitials() {
+		return initials;
+	}
+
+	public void setInitials(String initials) {
+		this.initials = initials;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public BigInteger getValueAddedTaxOwed() {
+		return valueAddedTaxOwed;
+	}
+
+	public void setValueAddedTaxOwed(BigInteger valueAddedTaxOwed) {
+		this.valueAddedTaxOwed = valueAddedTaxOwed;
+	}
+
+	public BigInteger getValueAddedTaxOwedToBePaidBack() {
+		return valueAddedTaxOwedToBePaidBack;
+	}
+
+	public void setValueAddedTaxOwedToBePaidBack(BigInteger valueAddedTaxOwedToBePaidBack) {
+		this.valueAddedTaxOwedToBePaidBack = valueAddedTaxOwedToBePaidBack;
+	}
+
+	public BigInteger getValueAddedTaxPrivateUse() {
+		return valueAddedTaxPrivateUse;
+	}
+
+	public void setValueAddedTaxPrivateUse(BigInteger valueAddedTaxPrivateUse) {
+		this.valueAddedTaxPrivateUse = valueAddedTaxPrivateUse;
+	}
+
+	public BigInteger getTaxedTurnoverSuppliesServicesGeneralTariff() {
+		return taxedTurnoverSuppliesServicesGeneralTariff;
+	}
+
+	public void setTaxedTurnoverSuppliesServicesGeneralTariff(BigInteger taxedTurnoverSuppliesServicesGeneralTariff) {
+		this.taxedTurnoverSuppliesServicesGeneralTariff = taxedTurnoverSuppliesServicesGeneralTariff;
+	}
+
+	public BigInteger getValueAddedTaxSuppliesServicesGeneralTariff() {
+		return valueAddedTaxSuppliesServicesGeneralTariff;
+	}
+
+	public void setValueAddedTaxSuppliesServicesGeneralTariff(BigInteger valueAddedTaxSuppliesServicesGeneralTariff) {
+		this.valueAddedTaxSuppliesServicesGeneralTariff = valueAddedTaxSuppliesServicesGeneralTariff;
+	}
+
+	public BigInteger getValueAddedTaxOnInput() {
+		return valueAddedTaxOnInput;
+	}
+
+	public void setValueAddedTaxOnInput(BigInteger valueAddedTaxOnInput) {
+		this.valueAddedTaxOnInput = valueAddedTaxOnInput;
+	}
+
+	public BigInteger getTurnoverFromTaxedSuppliesFromCountriesWithinTheEC() {
+		return turnoverFromTaxedSuppliesFromCountriesWithinTheEC;
+	}
+
+	public void setTurnoverFromTaxedSuppliesFromCountriesWithinTheEC(BigInteger turnoverFromTaxedSuppliesFromCountriesWithinTheEC) {
+		this.turnoverFromTaxedSuppliesFromCountriesWithinTheEC = turnoverFromTaxedSuppliesFromCountriesWithinTheEC;
+	}
+
+	public BigInteger getValueAddedTaxOnSuppliesFromCountriesWithinTheEC() {
+		return valueAddedTaxOnSuppliesFromCountriesWithinTheEC;
+	}
+
+	public void setValueAddedTaxOnSuppliesFromCountriesWithinTheEC(BigInteger valueAddedTaxOnSuppliesFromCountriesWithinTheEC) {
+		this.valueAddedTaxOnSuppliesFromCountriesWithinTheEC = valueAddedTaxOnSuppliesFromCountriesWithinTheEC;
+	}
+
 	private String fiscalNumber;
 	private String prefix;
 	private String initials;

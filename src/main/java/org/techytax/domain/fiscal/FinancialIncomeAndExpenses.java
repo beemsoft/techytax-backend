@@ -9,6 +9,8 @@ import org.techytax.domain.CostConstants;
 import org.techytax.helper.AmountHelper;
 import org.techytax.repository.CostRepository;
 
+import org.techytax.model.security.User;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -20,6 +22,22 @@ import static java.math.BigInteger.ZERO;
 @Data
 public class FinancialIncomeAndExpenses {
 
+  public BigInteger getInterestFromBusinessSavings() {
+    return interestFromBusinessSavings;
+  }
+
+  public void setInterestFromBusinessSavings(BigInteger interestFromBusinessSavings) {
+    this.interestFromBusinessSavings = interestFromBusinessSavings;
+  }
+
+  public Collection<Cost> getInterestList() {
+    return interestList;
+  }
+
+  public void setInterestList(Collection<Cost> interestList) {
+    this.interestList = interestList;
+  }
+
   @Autowired
   @JsonIgnore
   private CostRepository costRepository;
@@ -28,8 +46,8 @@ public class FinancialIncomeAndExpenses {
 
   private Collection<Cost> interestList;
 
-  public void calculate(String username) {
-    interestList = costRepository.findCosts(username, CostConstants.INTEREST, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+  public void calculate(User user) {
+    interestList = costRepository.findCosts(user, CostConstants.INTEREST, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
     BigDecimal totalInterest = BigDecimal.ZERO;
     for (Cost cost: interestList) {
       totalInterest = totalInterest.add(cost.getAmount());

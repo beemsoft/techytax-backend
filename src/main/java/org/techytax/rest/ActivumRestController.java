@@ -11,8 +11,10 @@ import org.techytax.domain.Activum;
 import org.techytax.domain.BusinessCar;
 import org.techytax.domain.Office;
 import org.techytax.helper.ActivaHelper;
+import org.techytax.model.security.User;
 import org.techytax.repository.ActivumRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
@@ -33,49 +35,51 @@ public class ActivumRestController {
     @Autowired
     private ActivaHelper activaHelper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value = "auth/activum", method = RequestMethod.GET)
     public Collection<Activum> getActiva(HttpServletRequest request) {
-        String username = getUser(request);
-        return activumRepository.findByUser(username);
+        User user = getUser(request);
+        return activumRepository.findByUser(user);
     }
 
     @RequestMapping(value = "auth/activum/machine", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveActivumMachine(HttpServletRequest request, @RequestBody Activum activum) {
-        String username = getUser(request);
-        activum.setUser(username);
+        User user = getUser(request);
+        activum.setUser(user);
         activumRepository.save(activum);
     }
 
     @RequestMapping(value = "auth/activum/car", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveActivumCar(HttpServletRequest request, @RequestBody BusinessCar activum) {
-        String username = getUser(request);
-        activum.setUser(username);
+        User user = getUser(request);
+        activum.setUser(user);
         activumRepository.save(activum);
     }
 
     @RequestMapping(value = "auth/activum", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveActivum(HttpServletRequest request, @RequestBody Activum activum) {
-        String username = getUser(request);
-        activum.setUser(username);
+        User user = getUser(request);
+        activum.setUser(user);
         activumRepository.save(activum);
     }
 
     @RequestMapping(value = "auth/activum/car/vat-correction-for-private-usage", method = { RequestMethod.GET })
     public BigInteger getActivumCar(HttpServletRequest request) {
-        String username = getUser(request);
-        return activaHelper.getVatCorrectionForPrivateUsageBusinessCar(username);
+        User user = getUser(request);
+        return activaHelper.getVatCorrectionForPrivateUsageBusinessCar(user);
     }
 
     @RequestMapping(value = "auth/activum/{id}", method = { RequestMethod.GET })
     public Activum getActivum(HttpServletRequest request, @PathVariable Long id) {
-        String username = getUser(request);
         return activumRepository.findById(id).get();
     }
 
     @RequestMapping(value = "auth/activum/office", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveActivumOffice(HttpServletRequest request, @RequestBody Office activum) {
-        String username = getUser(request);
-        activum.setUser(username);
+        User user = getUser(request);
+        activum.setUser(user);
         activumRepository.save(activum);
     }
 
@@ -84,8 +88,9 @@ public class ActivumRestController {
         activumRepository.deleteById(id);
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

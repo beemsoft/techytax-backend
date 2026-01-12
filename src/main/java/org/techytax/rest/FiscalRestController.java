@@ -19,12 +19,14 @@ import org.techytax.domain.VatType;
 import org.techytax.domain.fiscal.FiscalOverview;
 import org.techytax.domain.fiscal.VatReport;
 import org.techytax.helper.FiscalOverviewHelper;
+import org.techytax.model.security.User;
 import org.techytax.repository.ActivumRepository;
 import org.techytax.repository.BookRepository;
 import org.techytax.repository.CostRepository;
 import org.techytax.saas.domain.Registration;
 import org.techytax.saas.repository.RegistrationRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 import org.techytax.util.DateHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +52,7 @@ public class FiscalRestController {
     private ActivumRepository activumRepository;
     private BookRepository bookRepository;
     private RegistrationRepository registrationRepository;
+    private UserRepository userRepository;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -60,6 +63,7 @@ public class FiscalRestController {
       ActivumRepository activumRepository,
       BookRepository bookRepository,
       RegistrationRepository registrationRepository,
+      UserRepository userRepository,
       RestTemplate restTemplate
     ) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -68,36 +72,37 @@ public class FiscalRestController {
         this.activumRepository = activumRepository;
         this.bookRepository = bookRepository;
         this.registrationRepository = registrationRepository;
+        this.userRepository = userRepository;
         this.restTemplate = restTemplate;
     }
 
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.GET)
     public FiscalOverview getFiscalOverview(HttpServletRequest request) throws Exception {
-        String username = getUser(request);
-        return fiscalOverviewHelper.createFiscalOverview(username);
+        User user = getUser(request);
+        return fiscalOverviewHelper.createFiscalOverview(user);
     }
 
     @RequestMapping(value = "auth/fiscal-overview", method = RequestMethod.POST)
     public void sendFiscalData(HttpServletRequest request, @RequestBody VatReport vatReport) throws Exception {
-        String username = getUser(request);
+        User user = getUser(request);
         if (vatReport.getInvestments() != null && !vatReport.getInvestments().isEmpty()) {
-            saveActiva(vatReport.getInvestments(), username);
+            saveActiva(vatReport.getInvestments(), user);
         }
-        saveCosts(vatReport, username);
-        addBookValues(vatReport, username);
+        saveCosts(vatReport, user);
+        addBookValues(vatReport, user);
     }
 
-    private void saveActiva(ArrayList<Activum> activa, String username) {
+    private void saveActiva(ArrayList<Activum> activa, User user) {
         for (Activum activum : activa) {
-            activum.setUser(username);
+            activum.setUser(user);
             activumRepository.save(activum);
         }
     }
 
-    private void saveCosts(@RequestBody VatReport vatReport, String username) {
+    private void saveCosts(@RequestBody VatReport vatReport, User user) {
         if (vatReport.getTotalCarCosts().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.BUSINESS_CAR);
             cost.setAmount(vatReport.getTotalCarCosts());
@@ -106,7 +111,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalTransportCosts().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.TRAVEL_WITH_PUBLIC_TRANSPORT);
             cost.setAmount(vatReport.getTotalTransportCosts());
@@ -115,7 +120,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalOfficeCosts().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.SETTLEMENT);
             cost.setAmount(vatReport.getTotalOfficeCosts());
@@ -124,7 +129,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalOtherCosts().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.EXPENSE_CURRENT_ACCOUNT);
             cost.setAmount(vatReport.getTotalOtherCosts());
@@ -133,7 +138,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalFoodCosts().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.BUSINESS_FOOD);
             cost.setAmount(vatReport.getTotalFoodCosts());
@@ -142,7 +147,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalVatOut().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.EXPENSE_CURRENT_ACCOUNT);
             cost.setVat(vatReport.getTotalVatOut());
@@ -151,7 +156,7 @@ public class FiscalRestController {
         }
         if (vatReport.getTotalVatIn().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.INCOME_CURRENT_ACCOUNT);
             cost.setVat(vatReport.getTotalVatIn());
@@ -160,7 +165,7 @@ public class FiscalRestController {
         }
         if (vatReport.getSentInvoices().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.INVOICE_PAID);
             cost.setAmount(vatReport.getSentInvoices());
@@ -169,7 +174,7 @@ public class FiscalRestController {
         }
         if (vatReport.getVatSaldo().compareTo(ZERO) > 0) {
             Cost cost = new Cost();
-            cost.setUser(username);
+            cost.setUser(user);
             cost.setDate(vatReport.getLatestTransactionDate());
             cost.setCostType(CostConstants.VAT);
             cost.setAmount(vatReport.getVatSaldo());
@@ -178,8 +183,8 @@ public class FiscalRestController {
         }
     }
 
-    private VatDeclarationData createVatDeclarationData(String username, VatReport vatReport) throws Exception {
-        Registration registration = registrationRepository.findByUser(username).stream().findFirst().get();
+    private VatDeclarationData createVatDeclarationData(User user, VatReport vatReport) throws Exception {
+        Registration registration = registrationRepository.findByUser(user).stream().findFirst().get();
         VatDeclarationData data = new VatDeclarationData();
         FiscalPeriod period = DateHelper.getLatestVatPeriod(registration.getFiscalData().getDeclarationPeriod());
         data.setStartDate(period.getBeginDate());
@@ -213,12 +218,12 @@ public class FiscalRestController {
         return data;
     }
 
-    private void addBookValues(VatReport vatReport, String username) {
+    private void addBookValues(VatReport vatReport, User user) {
         if (vatReport.getLatestTransactionDate().getYear() < LocalDate.now().getYear()) {
             // TODO: fix NPE vat saldo null for KOR
             if (vatReport.getVatSaldo().compareTo(ZERO) > 0) {
                 BookValue bookValue = new BookValue();
-                bookValue.setUser(username);
+                bookValue.setUser(user);
                 bookValue.setBalanceType(BalanceType.VAT_TO_BE_PAID);
                 bookValue.setSaldo(vatReport.getVatSaldo().toBigInteger());
                 bookValue.setBookYear(LocalDate.now().getYear() - 1);
@@ -227,8 +232,9 @@ public class FiscalRestController {
         }
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

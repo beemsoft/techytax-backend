@@ -19,6 +19,66 @@ import static org.techytax.domain.CostConstants.SETTLEMENT;
 @Setter
 public class CostType {
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setOmschrijving(String omschrijving) {
+		this.omschrijving = omschrijving;
+	}
+
+	public boolean isBijschrijving() {
+		return bijschrijving;
+	}
+
+	public void setBijschrijving(boolean bijschrijving) {
+		this.bijschrijving = bijschrijving;
+	}
+
+	public boolean isBtwVerrekenbaar() {
+		return btwVerrekenbaar;
+	}
+
+	public void setBtwVerrekenbaar(boolean btwVerrekenbaar) {
+		this.btwVerrekenbaar = btwVerrekenbaar;
+	}
+
+	public boolean isBalansMeetellen() {
+		return balansMeetellen;
+	}
+
+	public void setBalansMeetellen(boolean balansMeetellen) {
+		this.balansMeetellen = balansMeetellen;
+	}
+
+	public boolean isAftrekbaar() {
+		return aftrekbaar;
+	}
+
+	public void setAftrekbaar(boolean aftrekbaar) {
+		this.aftrekbaar = aftrekbaar;
+	}
+
+	public boolean isInvestering() {
+		return investering;
+	}
+
+	public void setInvestering(boolean investering) {
+		this.investering = investering;
+	}
+
+	public ExternalCostType getExternalCostType() {
+		return externalCostType;
+	}
+
+	public void setExternalCostType(ExternalCostType externalCostType) {
+		this.externalCostType = externalCostType;
+	}
+
 	public static final String FOR_MATCHING = "CostType.FOR_MATCHING";
 	public static final String FOR_TYPES = "CostType.FOR_TYPES";
 

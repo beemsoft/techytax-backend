@@ -10,6 +10,8 @@ import org.techytax.helper.ActivaHelper;
 import org.techytax.helper.AmountHelper;
 import org.techytax.repository.CostRepository;
 
+import org.techytax.model.security.User;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -47,36 +49,36 @@ public class CompanyCosts {
 
   private BigInteger totalCost;
 
-  void calculate(String username) {
-    transportCostList = costRepository.findCosts(username, CostConstants.TRAVEL_WITH_PUBLIC_TRANSPORT, YEAR_START, YEAR_END);
+  void calculate(User user) {
+    transportCostList = costRepository.findCosts(user, CostConstants.TRAVEL_WITH_PUBLIC_TRANSPORT, YEAR_START, YEAR_END);
     BigDecimal totalTransportCosts = ZERO;
     for (Cost cost: transportCostList) {
       totalTransportCosts = totalTransportCosts.add(cost.getAmount());
     }
-    carCostList = costRepository.findCosts(username, CostConstants.BUSINESS_CAR, YEAR_START, YEAR_END);
+    carCostList = costRepository.findCosts(user, CostConstants.BUSINESS_CAR, YEAR_START, YEAR_END);
     BigDecimal totalBusinessCarCosts = ZERO;
     for (Cost cost: carCostList) {
       totalBusinessCarCosts = totalBusinessCarCosts.add(cost.getAmount());
     }
-    vatCorrectionForPrivateUsage = vatCorrectionForPrivateUsage.add(activaHelper.getVatCorrectionForPrivateUsageBusinessCar(username));
+    vatCorrectionForPrivateUsage = vatCorrectionForPrivateUsage.add(activaHelper.getVatCorrectionForPrivateUsageBusinessCar(user));
     totalBusinessCarCosts = totalBusinessCarCosts.add(new BigDecimal(vatCorrectionForPrivateUsage));
 
     carCosts = AmountHelper.roundToInteger(totalBusinessCarCosts);
     carAndTransportCosts = AmountHelper.roundToInteger(totalBusinessCarCosts.add(totalTransportCosts));
-    officeCostList = costRepository.findCosts(username, CostConstants.SETTLEMENT, YEAR_START, YEAR_END);
+    officeCostList = costRepository.findCosts(user, CostConstants.SETTLEMENT, YEAR_START, YEAR_END);
     BigDecimal totalOfficeCosts = ZERO;
     for (Cost cost: officeCostList) {
       totalOfficeCosts = totalOfficeCosts.add(cost.getAmount());
     }
     officeCosts = AmountHelper.roundToInteger(totalOfficeCosts);
-    generalCostList = costRepository.findCosts(username, CostConstants.EXPENSE_CURRENT_ACCOUNT, YEAR_START, YEAR_END);
+    generalCostList = costRepository.findCosts(user, CostConstants.EXPENSE_CURRENT_ACCOUNT, YEAR_START, YEAR_END);
     BigDecimal totalOtherCosts = ZERO;
     for (Cost cost: generalCostList) {
       if (cost.getAmount() != null) {
         totalOtherCosts = totalOtherCosts.add(cost.getAmount());
       }
     }
-    foodCostList = costRepository.findCosts(username, CostConstants.BUSINESS_FOOD, YEAR_START, YEAR_END);
+    foodCostList = costRepository.findCosts(user, CostConstants.BUSINESS_FOOD, YEAR_START, YEAR_END);
     BigDecimal totalFoodCosts = ZERO;
     for (Cost cost: foodCostList) {
       totalFoodCosts = totalFoodCosts.add(cost.getAmount());

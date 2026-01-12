@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.techytax.domain.CostMatch;
+import org.techytax.model.security.User;
 import org.techytax.repository.CostMatchRepository;
 import org.techytax.security.JwtTokenUtil;
+import org.techytax.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -26,10 +28,13 @@ public class CostMatchRestController {
     @Autowired
     private CostMatchRepository costMatchRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value = "auth/match", method = RequestMethod.GET)
     public Collection<CostMatch> getCostMatches(HttpServletRequest request) {
-        String username = getUser(request);
-        return costMatchRepository.findByUser(username);
+        User user = getUser(request);
+        return costMatchRepository.findByUser(user);
     }
 
     @RequestMapping(value = "auth/match/{id}", method = RequestMethod.GET)
@@ -39,8 +44,8 @@ public class CostMatchRestController {
 
     @RequestMapping(value = "auth/match", method = { RequestMethod.PUT, RequestMethod.POST })
     public void saveCostMatch(HttpServletRequest request, @RequestBody CostMatch costMatch) {
-        String username = getUser(request);
-        costMatch.setUser(username);
+        User user = getUser(request);
+        costMatch.setUser(user);
         costMatchRepository.save(costMatch);
     }
 
@@ -49,8 +54,9 @@ public class CostMatchRestController {
         costMatchRepository.deleteById(id);
     }
 
-    private String getUser(HttpServletRequest request) {
+    private User getUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return userRepository.findByUsername(username);
     }
 }

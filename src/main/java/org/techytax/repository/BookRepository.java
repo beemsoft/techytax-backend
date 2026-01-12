@@ -6,16 +6,18 @@ import org.springframework.data.repository.CrudRepository;
 import org.techytax.domain.BalanceType;
 import org.techytax.domain.BookValue;
 
+import org.techytax.model.security.User;
+
 import java.util.Collection;
 
 public interface BookRepository extends CrudRepository<BookValue, Long> {
 
     @Query("select b from BookValue as b where b.user = ?1 order by b.bookYear desc")
-    Collection<BookValue> findByUser(String username);
+    Collection<BookValue> findByUser(User user);
 
-    BookValue findBookValueByUserAndBalanceTypeAndBookYear(String username, BalanceType balanceType, int year);
+    BookValue findBookValueByUserAndBalanceTypeAndBookYear(User user, BalanceType balanceType, int year);
 
     @Modifying
     @Query("delete from BookValue b where b.user = ?1")
-    void deleteBookValues(String username);
+    void deleteBookValues(User user);
 }

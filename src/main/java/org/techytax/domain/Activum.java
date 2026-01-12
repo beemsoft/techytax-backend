@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.techytax.helper.DepreciationHelper;
 
+import org.techytax.model.security.User;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -29,7 +33,9 @@ public class Activum {
     protected Long id = 0L;
 
     @NotNull
-    private String user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String description;
 
@@ -48,6 +54,86 @@ public class Activum {
 
     @Enumerated(EnumType.ORDINAL)
     private BalanceType balanceType;
+
+    public int getNofYearsForDepreciation() {
+        return nofYearsForDepreciation;
+    }
+
+    public void setNofYearsForDepreciation(int nofYearsForDepreciation) {
+        this.nofYearsForDepreciation = nofYearsForDepreciation;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
+    public BigInteger getRemainingValue() {
+        return remainingValue;
+    }
+
+    public void setRemainingValue(BigInteger remainingValue) {
+        this.remainingValue = remainingValue;
+    }
+
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public BalanceType getBalanceType() {
+        return balanceType;
+    }
+
+    public void setBalanceType(BalanceType balanceType) {
+        this.balanceType = balanceType;
+    }
 
     private int nofYearsForDepreciation;
 

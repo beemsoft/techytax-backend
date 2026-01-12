@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import org.techytax.domain.Activum;
 import org.techytax.repository.ActivumRepository;
 
+import org.techytax.model.security.User;
+
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -19,6 +21,7 @@ import static org.techytax.domain.BalanceType.OFFICE;
 @Component
 @Data
 public class Depreciation {
+
   private BigInteger afschrijvingAuto;
   private BigInteger machineryDepreciation;
   private BigInteger settlementDepreciation;
@@ -33,13 +36,13 @@ public class Depreciation {
   private Collection<Activum> officeList;
 
 
-  void handleDepreciations(String username) {
+  void handleDepreciations(User user) {
     afschrijvingAuto = ZERO;
     machineryDepreciation = ZERO;
     settlementDepreciation = ZERO;
-    machineryList = activumRepository.findActivums(username, MACHINERY, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
-    carList = activumRepository.findActivums(username, CAR, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
-    officeList = activumRepository.findActivums(username, OFFICE, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+    machineryList = activumRepository.findActivums(user, MACHINERY, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+    carList = activumRepository.findActivums(user, CAR, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+    officeList = activumRepository.findActivums(user, OFFICE, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
 
     for (Activum activum: machineryList) {
       machineryDepreciation = machineryDepreciation.add(activum.getDepreciation());

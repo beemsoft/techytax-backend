@@ -24,6 +24,22 @@ import lombok.Data;
 @Data
 public class PrepaidTax {
 
+	public int getPrepaidIncome() {
+		return prepaidIncome;
+	}
+
+	public void setPrepaidIncome(int prepaidIncome) {
+		this.prepaidIncome = prepaidIncome;
+	}
+
+	public int getPrepaidHealth() {
+		return prepaidHealth;
+	}
+
+	public void setPrepaidHealth(int prepaidHealth) {
+		this.prepaidHealth = prepaidHealth;
+	}
+
 	int prepaidIncome;
 	
 	int prepaidHealth;

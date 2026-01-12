@@ -1,6 +1,7 @@
 package org.techytax.helper;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.techytax.domain.Activum;
 import org.techytax.domain.BalanceType;
@@ -11,6 +12,8 @@ import org.techytax.domain.Office;
 import org.techytax.repository.ActivumRepository;
 import org.techytax.repository.BookRepository;
 import org.techytax.util.DateHelper;
+
+import org.techytax.model.security.User;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -23,9 +26,9 @@ import java.util.Map;
 import static java.math.BigInteger.ZERO;
 
 @Component
-@Slf4j
-public
-class ActivaHelper {
+public class ActivaHelper {
+
+	private static final Logger log = LoggerFactory.getLogger(ActivaHelper.class);
 
 	public static final LocalDate YEAR_START = LocalDate.now().minusYears(1).withDayOfYear(1);
 	public static final LocalDate YEAR_END = LocalDate.now().withDayOfYear(1).minusDays(1);
@@ -42,27 +45,27 @@ class ActivaHelper {
 		this.activumRepository = activumRepository;
 	}
 
-	Map<BalanceType, FiscalBalance> handleActiva(String username) {
+	Map<BalanceType, FiscalBalance> handleActiva(User user) {
 		bookYear = DateHelper.getYear(new Date()) - 1;
 		BigInteger totalActiva = ZERO;
-		BigInteger newValue = handleActivumWithDepreciation(username, BalanceType.MACHINERY);
+		BigInteger newValue = handleActivumWithDepreciation(user, BalanceType.MACHINERY);
 		totalActiva = totalActiva.add(newValue);
-		newValue = handleActivumWithDepreciation(username, BalanceType.OFFICE);
+		newValue = handleActivumWithDepreciation(user, BalanceType.OFFICE);
 		totalActiva = totalActiva.add(newValue);
-		newValue = handleActivumWithDepreciation(username, BalanceType.CAR);
+		newValue = handleActivumWithDepreciation(user, BalanceType.CAR);
 		totalActiva = totalActiva.add(newValue);
-		newValue = handleBalanceType(username, BalanceType.CURRENT_ASSETS);
+		newValue = handleBalanceType(user, BalanceType.CURRENT_ASSETS);
 		totalActiva = totalActiva.add(newValue);
-		newValue = handleBalanceType(username, BalanceType.VAT_TO_BE_PAID);
-		BigInteger pensionValue = handleBalanceType(username, BalanceType.PENSION);
+		newValue = handleBalanceType(user, BalanceType.VAT_TO_BE_PAID);
+		BigInteger pensionValue = handleBalanceType(user, BalanceType.PENSION);
 		BigInteger nonCurrentAssetsValue = totalActiva.subtract(pensionValue).subtract(newValue);
-		handleBalanceTypeWithEndValue(username, nonCurrentAssetsValue);
+		handleBalanceTypeWithEndValue(user, nonCurrentAssetsValue);
 
 		return balanceMap;
 	}
 
-	private BigInteger handleActivumWithDepreciation(String username, BalanceType balanceType) {
-		Collection<Activum> newActiva = activumRepository.findActivums(username, balanceType, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
+	private BigInteger handleActivumWithDepreciation(User user, BalanceType balanceType) {
+		Collection<Activum> newActiva = activumRepository.findActivums(user, balanceType, LocalDate.now().minusYears(1).withDayOfYear(1), LocalDate.now().withDayOfYear(1).minusDays(1));
 		BigDecimal totalCost = BigDecimal.ZERO;
 		BigInteger totalValue = BigInteger.ZERO;
 		BigInteger totalRemainingValue = ZERO;
@@ -76,7 +79,7 @@ class ActivaHelper {
 		}
 
 		FiscalBalance fiscalBalance = new FiscalBalance();
-		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear - 1);
+		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(user, balanceType, bookYear - 1);
 		if (previousBookValue == null) {
 			fiscalBalance.setBeginSaldo(ZERO);
 		} else {
@@ -89,15 +92,15 @@ class ActivaHelper {
 		return totalValue;
 	}
 
-	private BigInteger handleBalanceType(String username, BalanceType balanceType) {
+	private BigInteger handleBalanceType(User user, BalanceType balanceType) {
 		FiscalBalance fiscalBalance = new FiscalBalance();
-		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear - 1);
+		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(user, balanceType, bookYear - 1);
 		if (previousBookValue == null) {
 			fiscalBalance.setBeginSaldo(ZERO);
 		} else {
 			fiscalBalance.setBeginSaldo(previousBookValue.getSaldo());
 		}
-		BookValue newBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, balanceType, bookYear);
+		BookValue newBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(user, balanceType, bookYear);
 		if (newBookValue == null) {
 			fiscalBalance.setEndSaldo(ZERO);
 		} else {
@@ -107,9 +110,9 @@ class ActivaHelper {
 		return fiscalBalance.getEndSaldo();
 	}
 
-	private BigInteger handleBalanceTypeWithEndValue(String username, BigInteger endValue) {
+	private BigInteger handleBalanceTypeWithEndValue(User user, BigInteger endValue) {
 		FiscalBalance fiscalBalance = new FiscalBalance();
-		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(username, BalanceType.NON_CURRENT_ASSETS, bookYear - 1);
+		BookValue previousBookValue = bookRepository.findBookValueByUserAndBalanceTypeAndBookYear(user, BalanceType.NON_CURRENT_ASSETS, bookYear - 1);
 		if (previousBookValue == null) {
 			fiscalBalance.setBeginSaldo(ZERO);
 		} else {
@@ -120,16 +123,16 @@ class ActivaHelper {
 		return endValue;
 	}
 
-	BigInteger getOfficeBottomValue(String username) {
-		Office office = activumRepository.findOffice(username);
+	BigInteger getOfficeBottomValue(User user) {
+		Office office = activumRepository.findOffice(user);
 		if (office != null)
 			return office.getTerrainValue();
 		else
 			return ZERO;
 	}
 
-	public BigInteger getVatCorrectionForPrivateUsageBusinessCar(String username) {
-		Collection<BusinessCar> carList = activumRepository.findBusinessCars(username, YEAR_START, YEAR_END);
+	public BigInteger getVatCorrectionForPrivateUsageBusinessCar(User user) {
+		Collection<BusinessCar> carList = activumRepository.findBusinessCars(user, YEAR_START, YEAR_END);
 		BigInteger vatCorrectionForPrivateUsage = BigInteger.ZERO;
 		for (BusinessCar activum: carList) {
 			BigDecimal privateUsage = activum.getVatCorrectionForPrivateUsage();

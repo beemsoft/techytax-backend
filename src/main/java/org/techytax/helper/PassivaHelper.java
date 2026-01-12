@@ -27,7 +27,7 @@ public class PassivaHelper {
 //    newSaldo = newSaldo.subtract(roundDownToInteger(vatDebt));
 //    if (currentBookValue == null) {
 //      BookValue newValue = new BookValue(NON_CURRENT_ASSETS, bookYear, newSaldo);
-//      newValue.setUser(UserCredentialManager.getUser());
+//      newValue.setUsername(UserCredentialManager.getUsername());
 //      bookValueDao.persistEntity(newValue);
 //    } else {
 //      currentBookValue.setSaldo(newSaldo);
@@ -50,7 +50,7 @@ public class PassivaHelper {
 //
 //      if (currentBookValue == null) {
 //        BookValue newValue = new BookValue(VAT_TO_BE_PAID, bookYear, newSaldo.toBigInteger());
-//        newValue.setUser(UserCredentialManager.getUser());
+//        newValue.setUsername(UserCredentialManager.getUsername());
 //        bookValueDao.persistEntity(newValue);
 //      } else {
 //        currentBookValue.setSaldo(newSaldo.toBigInteger());
@@ -83,7 +83,7 @@ public class PassivaHelper {
 //      if (previousBookValue != null) {
 //        newSaldo = previousBookValue.getSaldo();
 //        BookValue newValue = new BookValue(PENSION, bookYear, newSaldo);
-//        newValue.setUser(UserCredentialManager.getUser());
+//        newValue.setUsername(UserCredentialManager.getUsername());
 //        bookValueDao.persistEntity(newValue);
 //      }
 //    } else {

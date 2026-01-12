@@ -2,9 +2,12 @@ package org.techytax.domain.fiscal;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
+import org.techytax.model.security.User;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -15,7 +18,9 @@ public class FiscalReport {
     protected Long id = 0L;
 
     @NotNull
-    private String user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
     private Integer year;
