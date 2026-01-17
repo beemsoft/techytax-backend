@@ -1,8 +1,8 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 import org.techytax.external.domain.ExternalCostType;
 
@@ -15,74 +15,15 @@ import static org.techytax.domain.CostConstants.SETTLEMENT;
 @NamedQueries({ @NamedQuery(name = CostType.FOR_MATCHING, query = "SELECT ct FROM CostType ct WHERE ct.balansMeetellen = true OR ct IN :costTypes"),
 		@NamedQuery(name = CostType.FOR_TYPES, query = "SELECT ct FROM CostType ct WHERE ct IN :costTypes") })
 @Table(name = "kostensoort")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CostType {
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public void setOmschrijving(String omschrijving) {
-		this.omschrijving = omschrijving;
-	}
-
-	public boolean isBijschrijving() {
-		return bijschrijving;
-	}
-
-	public void setBijschrijving(boolean bijschrijving) {
-		this.bijschrijving = bijschrijving;
-	}
-
-	public boolean isBtwVerrekenbaar() {
-		return btwVerrekenbaar;
-	}
-
-	public void setBtwVerrekenbaar(boolean btwVerrekenbaar) {
-		this.btwVerrekenbaar = btwVerrekenbaar;
-	}
-
-	public boolean isBalansMeetellen() {
-		return balansMeetellen;
-	}
-
-	public void setBalansMeetellen(boolean balansMeetellen) {
-		this.balansMeetellen = balansMeetellen;
-	}
-
-	public boolean isAftrekbaar() {
-		return aftrekbaar;
-	}
-
-	public void setAftrekbaar(boolean aftrekbaar) {
-		this.aftrekbaar = aftrekbaar;
-	}
-
-	public boolean isInvestering() {
-		return investering;
-	}
-
-	public void setInvestering(boolean investering) {
-		this.investering = investering;
-	}
-
-	public ExternalCostType getExternalCostType() {
-		return externalCostType;
-	}
-
-	public void setExternalCostType(ExternalCostType externalCostType) {
-		this.externalCostType = externalCostType;
-	}
 
 	public static final String FOR_MATCHING = "CostType.FOR_MATCHING";
 	public static final String FOR_TYPES = "CostType.FOR_TYPES";
 
 	@Id
+	@EqualsAndHashCode.Include
 	private long id = 0;
 
 	private String omschrijving;
@@ -128,17 +69,5 @@ public class CostType {
 		} else {
 			return "Onbekend";
 		}
-	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (!(object instanceof CostType)) {
-			return false;
-		}
-		CostType other = (CostType) object;
-		if (this.getId() != other.getId()) {
-			return false;
-		}
-		return true;
 	}
 }

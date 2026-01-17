@@ -1,6 +1,7 @@
 package org.techytax.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.techytax.model.security.User;
 
@@ -10,74 +11,12 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CostMatch {
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getMatchString() {
-        return matchString;
-    }
-
-    public void setMatchString(String matchString) {
-        this.matchString = matchString;
-    }
-
-    public CostType getCostType() {
-        return costType;
-    }
-
-    public void setCostType(CostType costType) {
-        this.costType = costType;
-    }
-
-    public int getCostCharacter() {
-        return costCharacter;
-    }
-
-    public void setCostCharacter(int costCharacter) {
-        this.costCharacter = costCharacter;
-    }
-
-    public VatType getVatType() {
-        return vatType;
-    }
-
-    public void setVatType(VatType vatType) {
-        this.vatType = vatType;
-    }
-
-    public int getPercentage() {
-        return percentage;
-    }
-
-    public void setPercentage(int percentage) {
-        this.percentage = percentage;
-    }
-
-    public int getFixedAmount() {
-        return fixedAmount;
-    }
-
-    public void setFixedAmount(int fixedAmount) {
-        this.fixedAmount = fixedAmount;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     protected Long id = 0L;
 
     @NotNull

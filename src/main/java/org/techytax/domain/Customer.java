@@ -1,7 +1,7 @@
 package org.techytax.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.techytax.model.security.User;
 
@@ -14,132 +14,13 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigInteger;
 
 @Entity
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Customer {
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public BigInteger getCommerceNr() {
-		return commerceNr;
-	}
-
-	public void setCommerceNr(BigInteger commerceNr) {
-		this.commerceNr = commerceNr;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public BigInteger getNumber() {
-		return number;
-	}
-
-	public void setNumber(BigInteger number) {
-		this.number = number;
-	}
-
-	public String getNumberExtension() {
-		return numberExtension;
-	}
-
-	public void setNumberExtension(String numberExtension) {
-		this.numberExtension = numberExtension;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getContact() {
-		return contact;
-	}
-
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
-
-	public String getEmailInvoice() {
-		return emailInvoice;
-	}
-
-	public void setEmailInvoice(String emailInvoice) {
-		this.emailInvoice = emailInvoice;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-
-	public String getWebsite() {
-		return website;
-	}
-
-	public void setWebsite(String website) {
-		this.website = website;
-	}
 
 	@Id
 	@GeneratedValue
+	@EqualsAndHashCode.Include
 	protected Long id = 0L;
 
 	@NotNull

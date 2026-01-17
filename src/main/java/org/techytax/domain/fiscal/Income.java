@@ -23,30 +23,6 @@ import static java.math.BigInteger.ZERO;
 @Component
 public class Income {
 
-  public BigInteger getNettoOmzet() {
-    return nettoOmzet;
-  }
-
-  public void setNettoOmzet(BigInteger nettoOmzet) {
-    this.nettoOmzet = nettoOmzet;
-  }
-
-  public List<Invoice> getInvoices() {
-    return invoices;
-  }
-
-  public void setInvoices(List<Invoice> invoices) {
-    this.invoices = invoices;
-  }
-
-  public Collection<Cost> getPaidInvoices() {
-    return paidInvoices;
-  }
-
-  public void setPaidInvoices(Collection<Cost> paidInvoices) {
-    this.paidInvoices = paidInvoices;
-  }
-
   private BigInteger nettoOmzet = ZERO;
 
   private List<Invoice> invoices;

@@ -1,7 +1,7 @@
 package org.techytax.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -12,8 +12,8 @@ import java.math.BigInteger;
 @Entity
 @NamedQuery(name = Office.GET, query = "SELECT s FROM Office s WHERE s.user = :user")
 @DiscriminatorValue("S")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Office extends Activum {
 	
 	public static final String GET = "Office.GET";
@@ -25,10 +25,6 @@ public class Office extends Activum {
 	
 	private BigInteger wozValue;
 	
-	public BigInteger getTerrainValue() {
-		return terrainValue;
-	}
-
 	private BigInteger terrainValue;
 	
 //	@Type(type = "encryptedInteger")

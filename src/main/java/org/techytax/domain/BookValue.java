@@ -1,7 +1,7 @@
 package org.techytax.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.techytax.model.security.User;
 
@@ -27,49 +27,9 @@ import java.math.BigInteger;
 		@NamedQuery(name = BookValue.GET, query = "SELECT bv FROM BookValue bv WHERE bv.bookYear = :bookYear and bv.user = :user and bv.balanceType = :balanceType"),
 		@NamedQuery(name = BookValue.FOR_YEAR_AND_TYPES, query = "SELECT bv FROM BookValue bv WHERE bv.user = :user AND bv.bookYear = :bookYear AND bv.balanceType IN :balanceTypes ORDER BY bv.balanceType asc") })
 @Table(name = "bookvalue")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BookValue {
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public BalanceType getBalanceType() {
-		return balanceType;
-	}
-
-	public void setBalanceType(BalanceType balanceType) {
-		this.balanceType = balanceType;
-	}
-
-	public int getBookYear() {
-		return bookYear;
-	}
-
-	public void setBookYear(int bookYear) {
-		this.bookYear = bookYear;
-	}
-
-	public BigInteger getSaldo() {
-		return saldo;
-	}
-
-	public void setSaldo(BigInteger saldo) {
-		this.saldo = saldo;
-	}
 
 	static final String HISTORY = "org.techytax.domain.BookValue.HISTORY";
 	static final String FOR_YEAR = "org.techytax.domain.BookValue.FOR_YEAR";
@@ -78,6 +38,7 @@ public class BookValue {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	protected Long id = 0L;
 
 	@NotNull

@@ -78,7 +78,7 @@ public class InvoiceCreator {
       cell = new PdfPCell(new Paragraph("Maand"));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
-      cell = new PdfPCell(new Paragraph(invoice.getMonth()));
+      cell = new PdfPCell(new Paragraph(invoice.getInvoiceMonth()));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
 
@@ -219,7 +219,7 @@ public class InvoiceCreator {
       cell.setBackgroundColor(color);
       subTable.addCell(cell);
 
-      String description = invoice.getProject().getActivityDescription() + ", " + invoice.getMonth() + " " + invoice.getSent().minusDays(20).getYear();
+      String description = invoice.getProject().getActivityDescription() + ", " + invoice.getInvoiceMonth() + " " + invoice.getSent().minusDays(20).getYear();
       if (invoice.getUnitsOfWork() < 0) {
         description = "Creditering van factuurnummer " + invoice.getOriginalInvoiceNumber() + " (" + invoice.getProject().getActivityDescription() + ")";
       }
@@ -357,7 +357,7 @@ public class InvoiceCreator {
       cell = new PdfPCell(new Paragraph("Maand"));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
-      cell = new PdfPCell(new Paragraph(invoice.getMonth()));
+      cell = new PdfPCell(new Paragraph(invoice.getInvoiceMonth()));
       cell.setBorder(PdfPCell.NO_BORDER);
       subTable.addCell(cell);
 

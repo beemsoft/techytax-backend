@@ -1,9 +1,8 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.techytax.model.security.User;
 
@@ -21,100 +20,12 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Getter
-@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Invoice {
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public String getInvoiceNumber() {
-        return invoiceNumber;
-    }
-
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public float getUnitsOfWork() {
-        return unitsOfWork;
-    }
-
-    public void setUnitsOfWork(float unitsOfWork) {
-        this.unitsOfWork = unitsOfWork;
-    }
-
-    public BigDecimal getRevenue() {
-        return revenue;
-    }
-
-    public void setRevenue(BigDecimal revenue) {
-        this.revenue = revenue;
-    }
-
-    public String getOriginalInvoiceNumber() {
-        return originalInvoiceNumber;
-    }
-
-    public void setOriginalInvoiceNumber(String originalInvoiceNumber) {
-        this.originalInvoiceNumber = originalInvoiceNumber;
-    }
-
-    public int getDiscountPercentage() {
-        return discountPercentage;
-    }
-
-    public void setDiscountPercentage(int discountPercentage) {
-        this.discountPercentage = discountPercentage;
-    }
-
-    public LocalDate getSent() {
-        return sent;
-    }
-
-    public void setSent(LocalDate sent) {
-        this.sent = sent;
-    }
-
-    public LocalDate getPaid() {
-        return paid;
-    }
-
-    public void setPaid(LocalDate paid) {
-        this.paid = paid;
-    }
-
-    public String getHtmlText() {
-        return htmlText;
-    }
-
-    public void setHtmlText(String htmlText) {
-        this.htmlText = htmlText;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     protected Long id = 0L;
 
     @NotNull
@@ -129,7 +40,8 @@ public class Invoice {
     @NotNull
     private String invoiceNumber;
 
-    private String month;
+    @Column(name = "invoice_month")
+    private String invoiceMonth;
 
     private float unitsOfWork;
 

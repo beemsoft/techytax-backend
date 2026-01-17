@@ -35,11 +35,6 @@ public class Depreciation {
   private Collection<Activum> carList;
   private Collection<Activum> officeList;
 
-
-  public BigInteger getTotalDepreciation() {
-    return totalDepreciation;
-  }
-
   void handleDepreciations(User user) {
     afschrijvingAuto = ZERO;
     machineryDepreciation = ZERO;

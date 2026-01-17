@@ -1,8 +1,8 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.techytax.model.security.User;
 
@@ -18,68 +18,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Activity {
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
-	}
-
-	public BigDecimal getHours() {
-		return hours;
-	}
-
-	public void setHours(BigDecimal hours) {
-		this.hours = hours;
-	}
-
-	public BigDecimal getRevenue() {
-		return revenue;
-	}
-
-	public void setRevenue(BigDecimal revenue) {
-		this.revenue = revenue;
-	}
-
-	public String getActivityDescription() {
-		return activityDescription;
-	}
-
-	public void setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
-	}
-
-	public LocalDate getActivityDate() {
-		return activityDate;
-	}
-
-	public void setActivityDate(LocalDate activityDate) {
-		this.activityDate = activityDate;
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	protected Long id = 0L;
 
 	@NotNull
@@ -101,13 +46,4 @@ public class Activity {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate activityDate;
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Activity)) {
-			return false;
-		}
-		Activity other = (Activity)obj;
-		return this.id.equals(other.id);
-	}
 }

@@ -22,22 +22,6 @@ import static java.math.BigInteger.ZERO;
 @Data
 public class FinancialIncomeAndExpenses {
 
-  public BigInteger getInterestFromBusinessSavings() {
-    return interestFromBusinessSavings;
-  }
-
-  public void setInterestFromBusinessSavings(BigInteger interestFromBusinessSavings) {
-    this.interestFromBusinessSavings = interestFromBusinessSavings;
-  }
-
-  public Collection<Cost> getInterestList() {
-    return interestList;
-  }
-
-  public void setInterestList(Collection<Cost> interestList) {
-    this.interestList = interestList;
-  }
-
   @Autowired
   @JsonIgnore
   private CostRepository costRepository;
