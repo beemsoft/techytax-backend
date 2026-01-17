@@ -63,6 +63,7 @@ public class WebSecurityConfig {
             .requestMatchers(new AntPathRequestMatcher("/**/*.css", HttpMethod.GET.name())).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/**/*.js", HttpMethod.GET.name())).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/auth")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/users/authenticate")).permitAll()
             .anyRequest().authenticated()

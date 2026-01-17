@@ -1,6 +1,7 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 @Table(name = "cost")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Cost {
 
 	static final String FOR_PERIOD = "Cost.FOR_PERIOD";
@@ -61,6 +63,10 @@ public class Cost {
 
 	@Column(length = 500)
 	private String description;
+
+	private String billImage;
+
+	private String itemImage;
 
 	public long getCostTypeId() {
 		return costType.getId();

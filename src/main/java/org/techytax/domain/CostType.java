@@ -1,6 +1,7 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
@@ -17,6 +18,7 @@ import static org.techytax.domain.CostConstants.SETTLEMENT;
 @Table(name = "kostensoort")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CostType {
 
 	public static final String FOR_MATCHING = "CostType.FOR_MATCHING";

@@ -3,6 +3,8 @@ package org.techytax.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,8 @@ import java.util.Map;
 
 @Component
 public class JwtTokenUtil implements Serializable {
+
+    private final Log logger = LogFactory.getLog(this.getClass());
 
     private static final long serialVersionUID = -3301605591108950415L;
 
@@ -85,13 +89,18 @@ public class JwtTokenUtil implements Serializable {
 
     private Claims getClaimsFromToken(String token) {
         if (token == null) return null;
+        String compactToken = token;
+        if (compactToken.startsWith("Bearer ")) {
+            compactToken = compactToken.substring(7);
+        }
         try {
             return Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
-                    .parseSignedClaims(token)
+                    .parseSignedClaims(compactToken)
                     .getPayload();
         } catch (Exception e) {
+            logger.error("Could not get claims from token: " + e.getMessage());
             return null;
         }
     }
@@ -138,9 +147,18 @@ public class JwtTokenUtil implements Serializable {
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         final LocalDate created = getCreatedDateFromToken(token);
-        return (
-                username != null && username.equals(user.getUsername())
-                        && !isTokenExpired(token)
-                        && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
+        if (username == null || !username.equals(user.getUsername())) {
+            logger.warn("Token username does not match user details. Token username: " + username + ", UserDetails username: " + user.getUsername());
+            return false;
+        }
+        if (isTokenExpired(token)) {
+            logger.warn("Token is expired for user: " + username);
+            return false;
+        }
+        if (isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate())) {
+            logger.warn("Token was created before last password reset for user: " + username);
+            return false;
+        }
+        return true;
     }
 }
