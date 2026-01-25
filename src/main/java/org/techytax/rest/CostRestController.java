@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Collection;
 
 @RestController
@@ -50,8 +50,14 @@ public class CostRestController {
         return costRepository.findByUser(user);
     }
 
+    @RequestMapping(value = "auth/vat-costs", method = RequestMethod.GET)
+    public Collection<Cost> getVatCosts(HttpServletRequest request) {
+        User user = getUser(request);
+        return costRepository.findVatCosts(user, LocalDate.now().minusMonths(3).withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).minusDays(1));
+    }
+
     @RequestMapping(value = "auth/costs/{id}", method = RequestMethod.GET)
-    public Cost getCost(HttpServletRequest request, @PathVariable Long id) {
+    public Cost getCost(@PathVariable Long id) {
         return costRepository.findById(id).get();
     }
 

@@ -11,8 +11,8 @@ jwt:
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:D:/Docker/tt_db_3;AUTO_SERVER=true
-#    url: jdbc:h2:tcp://localhost:1521/tt_db   Using Docker
+    #url: jdbc:h2:D:/Docker/tt_db_3;AUTO_SERVER=true
+    url: jdbc:h2:file:/techytax_data/tt_db;AUTO_SERVER=TRUE #  Using Docker
     password: test
     username: sa
 

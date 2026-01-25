@@ -1,6 +1,7 @@
 package org.techytax.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,6 +47,7 @@ public class Cost {
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonIgnore
 	private User user;
 
 	@Column(precision = 10, scale = 2)
@@ -68,22 +70,4 @@ public class Cost {
 
 	private String itemImage;
 
-	public long getCostTypeId() {
-		return costType.getId();
-	}
-
-	public boolean isIncoming() {
-		return costType.isBijschrijving();
-	}
-
-	public boolean isInvestment() { return costType != null && costType.isInvestering(); }
-
-	public void roundValues() {
-		if (amount != null) {
-			amount = amount.setScale(2, BigDecimal.ROUND_HALF_UP);
-		}
-		if (vat != null) {
-			vat = vat.setScale(2, BigDecimal.ROUND_HALF_UP);
-		}
-	}
 }

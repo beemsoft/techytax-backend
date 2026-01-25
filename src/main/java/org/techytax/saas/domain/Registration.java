@@ -37,7 +37,7 @@ public class Registration {
   public static class PersonalData {
     @Id
     @GeneratedValue
-    Long id = 0L;
+    Long id;
     String initials;
     String firstName;
     String prefix;
@@ -68,7 +68,7 @@ public class Registration {
   public static class CompanyData {
     @Id
     @GeneratedValue
-    Long id = 0L;
+    Long id;
     String companyName;
     String address;
     String zipCode;
@@ -97,7 +97,7 @@ public class Registration {
   public static class FiscalData {
     @Id
     @GeneratedValue
-    Long id = 0L;
+    Long id;
     String vatNumber;
     VatPeriodType declarationPeriod;
   }

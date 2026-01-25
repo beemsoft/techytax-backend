@@ -1,11 +1,9 @@
 package org.techytax.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
-import org.techytax.external.domain.ExternalCostType;
 
 import jakarta.persistence.*;
 
@@ -39,11 +37,6 @@ public class CostType {
 	private boolean aftrekbaar;
 
 	private boolean investering;
-
-	@JsonIgnore
-	@OneToOne
-	@JoinTable(name = "cost_type_export", joinColumns = { @JoinColumn(name = "cost_type_id") }, inverseJoinColumns = { @JoinColumn(name = "external_code", referencedColumnName = "code") })
-	private ExternalCostType externalCostType;
 
 	public CostType() {
 		// default constructor required by JPA

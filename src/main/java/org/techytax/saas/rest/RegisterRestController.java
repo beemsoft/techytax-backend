@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.techytax.domain.RegisterUser;
 import org.techytax.model.security.Authority;
 import org.techytax.model.security.AuthorityName;
@@ -30,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Optional;
 
 @RestController
 public class RegisterRestController {
@@ -76,7 +79,7 @@ public class RegisterRestController {
   @Transactional
   public void addRegistration(HttpServletRequest request, @RequestBody RegisterUser registerUser) {
     if (userRepository.findByUsername(registerUser.getUsername()) != null) {
-      throw new RuntimeException("Gebruiker bestaat al");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gebruiker bestaat al");
     }
     User user = new User();
     String password = new BCryptPasswordEncoder().encode(registerUser.getPassword());
@@ -89,7 +92,7 @@ public class RegisterRestController {
     user.setLastname(registerUser.getLastName());
     user.setLastPasswordResetDate(LocalDate.now());
     userRepository.save(user);
-    log.info("addRegistration called by user: {}", getUser(request).getUsername());
+    log.info("addRegistration called for new user: {}", registerUser.getUsername());
   }
 
   @RequestMapping(value = "auth/register", method = RequestMethod.PUT)
@@ -104,13 +107,16 @@ public class RegisterRestController {
   @RequestMapping(value = "auth/register", method = RequestMethod.GET)
   public Registration getRegistration(HttpServletRequest request) {
     User user = getUser(request);
-    Registration registration;
-    try {
-      registration = registrationRepository.findByUser(user).stream().findFirst().get();
-    } catch (Exception e) {
-      throw new RuntimeException("Vul eerst je gegevens in");
+    Optional<Registration> registration = registrationRepository.findByUser(user).stream().findFirst();
+    if (registration.isPresent()) {
+      return registration.get();
+    } else {
+      Registration newRegistration = new Registration();
+      newRegistration.setUser(user);
+      registrationRepository.save(newRegistration);
+      log.info("New registration created for user: {}", user.getUsername());
+      return newRegistration;
     }
-    return registration;
   }
 
   @Transactional
