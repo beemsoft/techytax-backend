@@ -22,7 +22,7 @@ public interface CostRepository extends CrudRepository<Cost, Long> {
     Collection<Cost> findCosts(User user, CostType costType, LocalDate fromDate, LocalDate toDate);
 
     @Query("select c from Cost c " +
-            "where c.user = ?1 and (c.date between ?2 and ?3)")
+            "where c.user = ?1 and (c.date between ?2 and ?3) and c.amount is not null and c.amount > 0 and c.vat is not null and c.vat > 0")
     Collection<Cost> findVatCosts(User user, LocalDate startDate, LocalDate endDate);
 
     @Modifying
