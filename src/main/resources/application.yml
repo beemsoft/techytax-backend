@@ -11,8 +11,7 @@ jwt:
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    #url: jdbc:h2:D:/Docker/tt_db_3;AUTO_SERVER=true
-    url: jdbc:h2:file:/techytax_data/tt_db;AUTO_SERVER=TRUE #  Using Docker
+    url: jdbc:h2:${MY_LOCAL_TECHYTAX_DIR}/tt_db;AUTO_SERVER=true
     password: test
     username: sa
 
@@ -20,14 +19,16 @@ spring:
     database: H2
     generate-ddl: true
     hibernate:
-#      ddl-auto: create-drop
-      ddl-auto: none
+      ddl-auto: update
 
   jackson:
     serialization:
       INDENT_OUTPUT: true
       fail-on-empty-beans: false
       WRITE_DATES_AS_TIMESTAMPS: false
+
+  config:
+    import: "optional:classpath:license-config.yml"
 
   mail:
     host:

@@ -97,11 +97,12 @@ public class RegisterRestController {
 
   @RequestMapping(value = "auth/register", method = RequestMethod.PUT)
   @Transactional
-  public void updateRegistration(HttpServletRequest request, @RequestBody Registration registration) {
+  public void updateUser(HttpServletRequest request, @RequestBody RegisterUser registerUser) {
     User user = getUser(request);
-    registration.setUser(user);
-    registrationRepository.save(registration);
-    log.info("updateRegistration called by user: {}", user.getUsername());
+    user.setFirstname(registerUser.getFirstName());
+    user.setLastname(registerUser.getLastName());
+    userRepository.save(user);
+    log.info("updateUser called by user: {}", user.getUsername());
   }
 
   @RequestMapping(value = "auth/register", method = RequestMethod.GET)
