@@ -29,7 +29,8 @@ public class CostRestController {
     @Value("${jwt.header}")
     private String tokenHeader;
 
-    private final String imageStoragePath = "images";
+    @Value("${my.local.techytax.dir}")
+    private String techytaxDataDir;
 
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -63,7 +64,7 @@ public class CostRestController {
 
     @RequestMapping(value = "auth/cost/image/{fileName:.+}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getCostImage(@PathVariable String fileName) throws IOException {
-        Path path = Paths.get(imageStoragePath).resolve(fileName);
+        Path path = Paths.get(techytaxDataDir, "images").resolve(fileName);
         if (!Files.exists(path)) {
             return ResponseEntity.notFound().build();
         }
@@ -97,7 +98,7 @@ public class CostRestController {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        Path uploadPath = Paths.get(imageStoragePath);
+        Path uploadPath = Paths.get(techytaxDataDir, "images");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

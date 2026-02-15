@@ -29,20 +29,8 @@ spring:
   config:
     import: "optional:classpath:license-config.yml"
 
-  mail:
-    host:
-    port: 587
-    username:
-    password:
-
-      # Other properties
-    smtp:
-      auth: true
-      connectiontimeout: 5000
-      timeout: 5000
-      writetimeout: 5000
-
-      # TLS , port 587
-      starttls:
-        enable: true
+my:
+  local:
+    techytax:
+      dir: ${MY_LOCAL_TECHYTAX_DIR}
 
