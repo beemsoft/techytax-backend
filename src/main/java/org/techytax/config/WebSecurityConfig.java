@@ -14,12 +14,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.techytax.security.JwtAuthenticationEntryPoint;
 import org.techytax.security.JwtAuthenticationTokenFilter;
-
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
@@ -51,21 +50,21 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-          .cors(AbstractHttpConfigurer::disable)
+          .cors(Customizer.withDefaults())
           .csrf(AbstractHttpConfigurer::disable)
           .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
           .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
           .authorizeHttpRequests(auth -> auth
-            .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/*.html", HttpMethod.GET.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/favicon.ico", HttpMethod.GET.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/**/*.html", HttpMethod.GET.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/**/*.css", HttpMethod.GET.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/**/*.js", HttpMethod.GET.name())).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/auth")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/users/authenticate")).permitAll()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/*.html").permitAll()
+            .requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+            .requestMatchers(HttpMethod.GET, "/**/*.html").permitAll()
+            .requestMatchers(HttpMethod.GET, "/**/*.css").permitAll()
+            .requestMatchers(HttpMethod.GET, "/**/*.js").permitAll()
+            .requestMatchers("/register").permitAll()
+            .requestMatchers("/auth").permitAll()
+            .requestMatchers("/users/authenticate").permitAll()
+            .requestMatchers("/docker/updates").permitAll()
             .anyRequest().authenticated()
           );
 
@@ -74,7 +73,7 @@ public class WebSecurityConfig {
 
         // disable page caching
         httpSecurity.headers(headers -> headers.cacheControl(cache -> cache.disable()));
-        
+
         return httpSecurity.build();
     }
 }
