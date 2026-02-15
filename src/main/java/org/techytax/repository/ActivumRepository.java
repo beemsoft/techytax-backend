@@ -15,6 +15,9 @@ import java.util.Collection;
 
 public interface ActivumRepository extends CrudRepository<Activum, Long> {
 
+    @Query("select a from Activum a " +
+            "where a.user = ?1 " +
+            "order by a.endDate asc, a.startDate desc")
     Collection<Activum> findByUser(User user);
 
     @Query("select a from Activum a " +
