@@ -81,6 +81,9 @@ public class RegisterRestController {
     if (userRepository.findByUsername(registerUser.getUsername()) != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gebruiker bestaat al");
     }
+    if (registerUser.getChamberOfCommerceNumber() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "KvK-nummer is verplicht");
+    }
     User user = new User();
     String password = new BCryptPasswordEncoder().encode(registerUser.getPassword());
     user.setPassword(password);
@@ -92,7 +95,14 @@ public class RegisterRestController {
     user.setLastname(registerUser.getLastName());
     user.setLastPasswordResetDate(LocalDate.now());
     userRepository.save(user);
-    log.info("addRegistration called for new user: {}", registerUser.getUsername());
+    
+    Registration registration = new Registration();
+    registration.setUser(user);
+    registration.getCompanyData().setChamberOfCommerceNumber(registerUser.getChamberOfCommerceNumber());
+    registration.setRegistrationDate(LocalDate.now());
+    registrationRepository.save(registration);
+    
+    log.info("addRegistration called for new user: {} with KvK: {}", registerUser.getUsername(), registerUser.getChamberOfCommerceNumber());
   }
 
   @RequestMapping(value = "auth/register", method = RequestMethod.PUT)
@@ -102,6 +112,14 @@ public class RegisterRestController {
     user.setFirstname(registerUser.getFirstName());
     user.setLastname(registerUser.getLastName());
     userRepository.save(user);
+
+    if (registerUser.getChamberOfCommerceNumber() != null) {
+      Optional<Registration> registration = registrationRepository.findByUser(user).stream().findFirst();
+      if (registration.isPresent()) {
+        registration.get().getCompanyData().setChamberOfCommerceNumber(registerUser.getChamberOfCommerceNumber());
+        registrationRepository.save(registration.get());
+      }
+    }
     log.info("updateUser called by user: {}", user.getUsername());
   }
 
