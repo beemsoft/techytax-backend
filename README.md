@@ -1,10 +1,10 @@
 # 🏦 TechyTax Backend
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-24-blue.svg)](https://openjdk.java.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-25-blue.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-TechyTax is a powerful, streamlined backend service designed to simplify tax management and financial tracking for freelancers and small businesses. Built on the modern Spring Boot 3 stack, it provides robust security, automated depreciation calculations, and comprehensive fiscal reporting.
+TechyTax is a powerful, streamlined backend service designed to simplify tax management and financial tracking for freelancers and small businesses. Built on the modern Spring Boot 4 stack, it provides robust security, automated depreciation calculations, and comprehensive fiscal reporting.
 
 ---
 
@@ -22,9 +22,9 @@ TechyTax is a powerful, streamlined backend service designed to simplify tax man
 
 ## 🛠 Tech Stack
 
-- **Framework**: Spring Boot 3.4.1
-- **Language**: Java 24
-- **Security**: Spring Security 6 + JJWT
+- **Framework**: Spring Boot 4.0.2
+- **Language**: Java 25
+- **Security**: Spring Security 6 + JJWT 0.12.6
 - **Database**: H2 (Embedded for development/testing)
 - **Persistence**: Spring Data JPA / Hibernate 6
 - **Build Tool**: Maven
@@ -36,7 +36,7 @@ TechyTax is a powerful, streamlined backend service designed to simplify tax man
 
 ### Prerequisites
 
-- **JDK 24** or higher
+- **JDK 25** or higher
 - **Maven 3.9+**
 
 ### Installation & Run
